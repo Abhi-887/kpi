@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\QuoteController;
 use App\Http\Controllers\RateCardController;
 use App\Http\Controllers\ShipmentController;
 use Illuminate\Support\Facades\Route;
@@ -24,6 +25,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Rate Cards routes
     Route::resource('rate-cards', RateCardController::class);
+
+    // Quotes routes
+    Route::resource('quotes', QuoteController::class);
 });
 
 require __DIR__.'/settings.php';
