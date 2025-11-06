@@ -12,11 +12,11 @@ import { Head } from '@inertiajs/react'
 import { type BreadcrumbItem } from '@/types'
 
 const statusColors: Record<string, string> = {
-  pending: 'bg-yellow-100 text-yellow-800',
-  in_transit: 'bg-blue-100 text-blue-800',
-  delivered: 'bg-green-100 text-green-800',
-  returned: 'bg-orange-100 text-orange-800',
-  cancelled: 'bg-red-100 text-red-800',
+  pending: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-200',
+  in_transit: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-200',
+  delivered: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-200',
+  returned: 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-200',
+  cancelled: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-200',
 }
 
 interface Shipment {
@@ -196,7 +196,7 @@ export default function ShipmentsIndex() {
 
         {/* Results Info */}
         <div className="flex items-center justify-between">
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-gray-600 dark:text-gray-400">
             Showing <strong>{shipments.data.length}</strong> of{' '}
             <strong>{shipments.total}</strong> shipments
           </p>
@@ -217,46 +217,46 @@ export default function ShipmentsIndex() {
           <CardContent className="p-0">
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="border-b bg-gray-50">
+                <thead className="border-b bg-gray-50 dark:bg-gray-900/50">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
                       Tracking #
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
                       Route
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
                       Details
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
                       Status
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
                       Cost
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
                       Action
                     </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y">
                   {shipments.data.map((shipment: Shipment) => (
-                    <tr key={shipment.id} className="hover:bg-gray-50">
+                    <tr key={shipment.id} className="hover:bg-gray-50 dark:hover:bg-gray-900/50">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="font-mono text-sm font-semibold">{shipment.tracking_number}</div>
                         {shipment.reference_number && (
-                          <div className="text-xs text-gray-500">{shipment.reference_number}</div>
+                          <div className="text-xs text-gray-500 dark:text-gray-400">{shipment.reference_number}</div>
                         )}
                       </td>
                       <td className="px-6 py-4">
                         <div className="text-sm">
                           <div className="font-medium">{shipment.origin_city} → {shipment.destination_city}</div>
-                          <div className="text-xs text-gray-500">{shipment.origin_country} → {shipment.destination_country}</div>
+                          <div className="text-xs text-gray-500 dark:text-gray-400">{shipment.origin_country} → {shipment.destination_country}</div>
                         </div>
                       </td>
                       <td className="px-6 py-4 text-sm">
                         <div>{shipment.item_description}</div>
-                        <div className="text-xs text-gray-500">
+                        <div className="text-xs text-gray-500 dark:text-gray-400">
                           {shipment.weight}kg • {shipment.service_type}
                         </div>
                       </td>
@@ -271,7 +271,7 @@ export default function ShipmentsIndex() {
                       <td className="px-6 py-4 whitespace-nowrap">
                         <Link
                           href={`/shipments/${shipment.id}`}
-                          className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                          className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-sm font-medium"
                         >
                           View
                         </Link>
@@ -287,17 +287,17 @@ export default function ShipmentsIndex() {
         {/* Pagination */}
         {shipments.last_page > 1 && (
           <div className="flex items-center justify-between">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-gray-600 dark:text-gray-400">
               Page {shipments.current_page} of {shipments.last_page}
             </p>
             <div className="flex gap-2">
               {shipments.prev_page_url && (
-                <Link href={shipments.prev_page_url} className="px-3 py-2 rounded border hover:bg-gray-100">
+                <Link href={shipments.prev_page_url} className="px-3 py-2 rounded border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-900/50">
                   Previous
                 </Link>
               )}
               {shipments.next_page_url && (
-                <Link href={shipments.next_page_url} className="px-3 py-2 rounded border hover:bg-gray-100">
+                <Link href={shipments.next_page_url} className="px-3 py-2 rounded border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-900/50">
                   Next
                 </Link>
               )}
