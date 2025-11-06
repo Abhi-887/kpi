@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\InvoiceController;
@@ -77,6 +78,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('{notification}', [NotificationController::class, 'delete'])->name('notifications.delete');
         Route::post('clear', [NotificationController::class, 'clear'])->name('notifications.clear');
         Route::post('test', [NotificationController::class, 'testNotification'])->name('notifications.test');
+    });
+
+    // Audit Logs routes (admin only)
+    Route::middleware('role:admin')->group(function () {
+        Route::get('audit-logs', [AuditLogController::class, 'index'])->name('audit-logs.index');
+        Route::get('audit-logs/{auditLog}', [AuditLogController::class, 'show'])->name('audit-logs.show');
+        Route::get('audit-logs/export/csv', [AuditLogController::class, 'export'])->name('audit-logs.export');
     });
 });
 
