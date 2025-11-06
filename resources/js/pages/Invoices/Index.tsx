@@ -173,12 +173,12 @@ export default function Index({ invoices, filters }: IndexProps) {
 
               <div>
                 <label className="text-sm font-semibold">Status</label>
-                <Select defaultValue={filters.status || ''} onValueChange={handleStatusFilter}>
+                <Select defaultValue={filters.status || 'all'} onValueChange={(v) => handleStatusFilter(v === 'all' ? '' : v)}>
                   <SelectTrigger className="mt-1 dark:bg-gray-800 dark:border-gray-700">
                     <SelectValue placeholder="All Statuses" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Statuses</SelectItem>
+                    <SelectItem value="all">All Statuses</SelectItem>
                     <SelectItem value="draft">Draft</SelectItem>
                     <SelectItem value="issued">Issued</SelectItem>
                     <SelectItem value="sent">Sent</SelectItem>
@@ -193,12 +193,12 @@ export default function Index({ invoices, filters }: IndexProps) {
 
               <div>
                 <label className="text-sm font-semibold">Payment Status</label>
-                <Select defaultValue={filters.payment_status || ''} onValueChange={handlePaymentStatusFilter}>
+                <Select defaultValue={filters.payment_status || 'all'} onValueChange={(v) => handlePaymentStatusFilter(v === 'all' ? '' : v)}>
                   <SelectTrigger className="mt-1 dark:bg-gray-800 dark:border-gray-700">
                     <SelectValue placeholder="All" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All</SelectItem>
+                    <SelectItem value="all">All</SelectItem>
                     <SelectItem value="unpaid">Unpaid</SelectItem>
                     <SelectItem value="partially_paid">Partially Paid</SelectItem>
                     <SelectItem value="paid">Paid</SelectItem>

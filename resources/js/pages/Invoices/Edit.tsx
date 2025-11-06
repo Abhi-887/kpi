@@ -284,12 +284,12 @@ export default function Edit({ invoice, customers, orders }: EditProps) {
                   </div>
                   <div>
                     <label className="text-sm font-semibold">Payment Method</label>
-                    <Select value={data.payment_method} onValueChange={(v) => setData('payment_method', v)}>
+                    <Select value={data.payment_method || 'none'} onValueChange={(v) => setData('payment_method', v === 'none' ? '' : v)}>
                       <SelectTrigger className="mt-1 dark:bg-gray-900 dark:border-gray-700">
                         <SelectValue placeholder="Select" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="">None</SelectItem>
+                        <SelectItem value="none">None</SelectItem>
                         <SelectItem value="bank_transfer">Bank Transfer</SelectItem>
                         <SelectItem value="credit_card">Credit Card</SelectItem>
                         <SelectItem value="check">Check</SelectItem>
