@@ -68,7 +68,7 @@ export default function SuppliersIndex() {
           <CardHeader>
             <CardTitle>Search</CardTitle>
           </CardHeader>
-          <CardContent className="flex gap-2">
+          <CardContent className="flex flex-col md:flex-row gap-2">
             <Input
               placeholder="Search by name or ID..."
               value={search}
@@ -76,8 +76,10 @@ export default function SuppliersIndex() {
               onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
               className="flex-1"
             />
-            <Button onClick={handleSearch}><Search className="w-4 h-4 mr-2" />Search</Button>
-            <Button onClick={handleReset} variant="outline">Reset</Button>
+            <div className="flex gap-2">
+              <Button onClick={handleSearch}><Search className="w-4 h-4 mr-2" />Search</Button>
+              <Button onClick={handleReset} variant="outline">Reset</Button>
+            </div>
           </CardContent>
         </Card>
 

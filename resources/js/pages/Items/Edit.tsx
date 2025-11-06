@@ -46,7 +46,7 @@ export default function ItemEdit() {
     }
   }
 
-  const handleSelectChange = (name: string, value: string) => {
+  const handleSelectChange = (name: string, value: string | boolean) => {
     setFormData(prev => ({ ...prev, [name]: value }))
   }
 
@@ -75,8 +75,8 @@ export default function ItemEdit() {
         <Form method="post" action={`/items/${item.id}`} className="space-y-6">
           <input type="hidden" name="_method" value="PATCH" />
           
-          <div className="grid md:grid-cols-2 gap-6">
-            <Card>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Card className="h-fit">
               <CardHeader>
                 <CardTitle>Identification</CardTitle>
               </CardHeader>
@@ -110,7 +110,7 @@ export default function ItemEdit() {
                 </div>
                 <div>
                   <label className="text-sm font-medium mb-1 block">Category *</label>
-                  <Select value={formData.category} onValueChange={(val) => handleSelectChange('category', val)}>
+                  <Select value={formData.category || 'General'} onValueChange={(val) => handleSelectChange('category', val)}>
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
@@ -130,7 +130,7 @@ export default function ItemEdit() {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="h-fit">
               <CardHeader>
                 <CardTitle>Pricing</CardTitle>
               </CardHeader>
@@ -171,13 +171,13 @@ export default function ItemEdit() {
                 </div>
                 <div>
                   <label className="text-sm font-medium mb-1 block">Active</label>
-                  <Select value={formData.active_flag ? '1' : '0'} onValueChange={(val) => handleSelectChange('active_flag', val)}>
+                  <Select value={formData.active_flag ? 'active' : 'inactive'} onValueChange={(val) => handleSelectChange('active_flag', val === 'active')}>
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="1">Active</SelectItem>
-                      <SelectItem value="0">Inactive</SelectItem>
+                      <SelectItem value="active">Active</SelectItem>
+                      <SelectItem value="inactive">Inactive</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -200,7 +200,7 @@ export default function ItemEdit() {
                   className="w-full px-3 py-2 border border-input rounded-md"
                 />
               </div>
-              <div className="grid md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div>
                   <label className="text-sm font-medium mb-1 block">Length (cm)</label>
                   <Input type="number" name="length" step="0.01" value={formData.length} onChange={handleChange} />

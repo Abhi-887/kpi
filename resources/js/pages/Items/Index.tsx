@@ -88,7 +88,7 @@ export default function ItemsIndex() {
             <CardTitle>Search & Filter</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               <div>
                 <label className="text-sm font-medium mb-1 block">Search</label>
                 <Input
@@ -100,12 +100,12 @@ export default function ItemsIndex() {
               </div>
               <div>
                 <label className="text-sm font-medium mb-1 block">Category</label>
-                <Select value={category} onValueChange={setCategory}>
+                <Select value={category || 'all'} onValueChange={setCategory}>
                   <SelectTrigger>
                     <SelectValue placeholder="All Categories" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Categories</SelectItem>
+                    <SelectItem value="all">All Categories</SelectItem>
                     {categories.map((cat: string) => (
                       <SelectItem key={cat} value={cat}>{cat}</SelectItem>
                     ))}
@@ -114,18 +114,18 @@ export default function ItemsIndex() {
               </div>
               <div>
                 <label className="text-sm font-medium mb-1 block">Status</label>
-                <Select value={active} onValueChange={setActive}>
+                <Select value={active || 'all'} onValueChange={setActive}>
                   <SelectTrigger>
                     <SelectValue placeholder="All" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All</SelectItem>
+                    <SelectItem value="all">All</SelectItem>
                     <SelectItem value="1">Active</SelectItem>
                     <SelectItem value="0">Inactive</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
-              <div className="flex items-end gap-2">
+              <div className="flex flex-col md:flex-row gap-2">
                 <Button onClick={handleSearch} variant="default" className="flex-1">
                   <Search className="w-4 h-4 mr-2" /> Search
                 </Button>
