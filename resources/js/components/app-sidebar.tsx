@@ -13,7 +13,7 @@ import {
 import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid, Package, DollarSign, FileText, Users, ShoppingCart, Receipt, Bell, Zap, Settings, History, TrendingUp } from 'lucide-react';
+import { BookOpen, Folder, LayoutGrid, Package, DollarSign, FileText, Users, ShoppingCart, Receipt, Bell, Zap, Settings, History, TrendingUp, Layers, Database, Tag } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
@@ -21,6 +21,36 @@ const mainNavItems: NavItem[] = [
         title: 'Dashboard',
         href: dashboard(),
         icon: LayoutGrid,
+    },
+    {
+        title: 'Items',
+        href: '/items',
+        icon: Database,
+    },
+    {
+        title: 'Unit of Measures',
+        href: '/unit-of-measures',
+        icon: Layers,
+    },
+    {
+        title: 'Tax Codes',
+        href: '/tax-codes',
+        icon: Receipt,
+    },
+    {
+        title: 'Suppliers',
+        href: '/suppliers',
+        icon: Users,
+    },
+    {
+        title: 'Cost Components',
+        href: '/cost-components',
+        icon: DollarSign,
+    },
+    {
+        title: 'Price Lists',
+        href: '/price-lists',
+        icon: Tag,
     },
     {
         title: 'Customers',

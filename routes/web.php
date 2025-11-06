@@ -1,19 +1,25 @@
 <?php
 
 use App\Http\Controllers\AuditLogController;
+use App\Http\Controllers\CostComponentController;
 use App\Http\Controllers\CourierPriceController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ForwardingPriceController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\IntegrationController;
+use App\Http\Controllers\ItemController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PackagingPriceController;
 use App\Http\Controllers\PriceComparisonController;
+use App\Http\Controllers\PriceListController;
 use App\Http\Controllers\QuoteController;
 use App\Http\Controllers\RateCardController;
 use App\Http\Controllers\ShipmentController;
+use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\TaxCodeController;
+use App\Http\Controllers\UnitOfMeasureController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
@@ -26,6 +32,14 @@ Route::get('/', function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    // Master Data Routes
+    Route::resource('items', ItemController::class);
+    Route::resource('unit-of-measures', UnitOfMeasureController::class);
+    Route::resource('tax-codes', TaxCodeController::class);
+    Route::resource('suppliers', SupplierController::class);
+    Route::resource('cost-components', CostComponentController::class);
+    Route::resource('price-lists', PriceListController::class);
 
     // Shipments routes
     Route::get('shipments', [ShipmentController::class, 'index'])->name('shipments.index');
