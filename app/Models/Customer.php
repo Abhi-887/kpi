@@ -49,6 +49,11 @@ class Customer extends Model
         return $this->belongsTo(PaymentTerm::class);
     }
 
+    public function orders(): HasMany
+    {
+        return $this->hasMany(Order::class);
+    }
+
     public function getAvailableCreditAttribute(): float
     {
         if (! $this->credit_limit) {

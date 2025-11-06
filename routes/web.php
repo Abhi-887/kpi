@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\QuoteController;
 use App\Http\Controllers\RateCardController;
 use App\Http\Controllers\ShipmentController;
@@ -32,6 +34,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Customers routes
     Route::resource('customers', CustomerController::class);
+
+    // Orders routes
+    Route::resource('orders', OrderController::class);
+
+    // Invoices routes
+    Route::resource('invoices', InvoiceController::class);
+    Route::patch('invoices/{invoice}/mark-as-sent', [InvoiceController::class, 'markAsSent'])->name('invoices.mark-as-sent');
+    Route::post('invoices/{invoice}/record-payment', [InvoiceController::class, 'recordPayment'])->name('invoices.record-payment');
 });
 
 require __DIR__.'/settings.php';
