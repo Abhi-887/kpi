@@ -9,6 +9,7 @@ import AppLayout from '@/layouts/app-layout'
 import { useState } from 'react'
 import { ChevronDown, Download, Search } from 'lucide-react'
 import { Head } from '@inertiajs/react'
+import { type BreadcrumbItem } from '@/types'
 
 const statusColors: Record<string, string> = {
   pending: 'bg-yellow-100 text-yellow-800',
@@ -52,6 +53,13 @@ interface PageProps {
 export default function ShipmentsIndex() {
   const { shipments, filters, origins, destinations } = usePage().props as any
 
+  const breadcrumbs: BreadcrumbItem[] = [
+    {
+      title: 'Shipments',
+      href: '/shipments',
+    },
+  ]
+
   const [search, setSearch] = useState(filters.search || '')
   const [status, setStatus] = useState(filters.status || '')
   const [originCity, setOriginCity] = useState(filters.origin_city || '')
@@ -89,13 +97,9 @@ export default function ShipmentsIndex() {
   }
 
   return (
-    <AppLayout>
-      <div className="space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold">Shipments</h1>
-          <p className="text-gray-600">Manage and track all your shipments</p>
-        </div>
-
+    <AppLayout breadcrumbs={breadcrumbs}>
+      <Head title="Shipments" />
+      <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
         {/* Filters Card */}
         <Card>
           <CardHeader>
