@@ -131,7 +131,6 @@ export default function ShipmentsIndex() {
                     <SelectValue placeholder="All Status" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Status</SelectItem>
                     <SelectItem value="pending">Pending</SelectItem>
                     <SelectItem value="in_transit">In Transit</SelectItem>
                     <SelectItem value="delivered">Delivered</SelectItem>
@@ -149,8 +148,7 @@ export default function ShipmentsIndex() {
                     <SelectValue placeholder="Select city" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Cities</SelectItem>
-                    {origins.map((city) => (
+                    {origins.map((city: string) => (
                       <SelectItem key={city} value={city}>
                         {city}
                       </SelectItem>
@@ -167,8 +165,7 @@ export default function ShipmentsIndex() {
                     <SelectValue placeholder="Select city" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Cities</SelectItem>
-                    {destinations.map((city) => (
+                    {destinations.map((city: string) => (
                       <SelectItem key={city} value={city}>
                         {city}
                       </SelectItem>
@@ -239,7 +236,7 @@ export default function ShipmentsIndex() {
                   </tr>
                 </thead>
                 <tbody className="divide-y">
-                  {shipments.data.map((shipment) => (
+                  {shipments.data.map((shipment: Shipment) => (
                     <tr key={shipment.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="font-mono text-sm font-semibold">{shipment.tracking_number}</div>
