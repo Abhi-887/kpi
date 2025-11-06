@@ -88,8 +88,8 @@ export default function NotificationsIndex() {
 
   return (
     <AppLayout>
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
+      <div className="space-y-6 p-4 sm:p-6 lg:p-8">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold tracking-tight">Notifications</h1>
             <p className="text-gray-500 dark:text-gray-400 mt-1">
@@ -97,21 +97,21 @@ export default function NotificationsIndex() {
             </p>
           </div>
 
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <Link href="/notifications/preferences">
-              <Button variant="outline">Preferences</Button>
+              <Button variant="outline" size="sm">Preferences</Button>
             </Link>
-            <Button onClick={handleMarkAllAsRead} variant="outline">
+            <Button onClick={handleMarkAllAsRead} variant="outline" size="sm">
               <CheckSquare className="w-4 h-4 mr-2" />
               Mark All Read
             </Button>
-            <Button onClick={handleClear} variant="destructive">
+            <Button onClick={handleClear} variant="destructive" size="sm">
               Clear All
             </Button>
           </div>
         </div>
 
-        <div className="space-y-2">
+        <div className="grid gap-3">
           {notifications.data.length > 0 ? (
             notifications.data.map((notification) => (
               <div
@@ -122,33 +122,34 @@ export default function NotificationsIndex() {
                     : 'bg-white dark:bg-gray-900 border-blue-200 dark:border-blue-800'
                 }`}
               >
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span>{getChannelIcon(notification.channel)}</span>
-                      <h3 className="font-semibold text-lg">
+                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex flex-wrap items-center gap-2 mb-2">
+                      <span className="text-lg">{getChannelIcon(notification.channel)}</span>
+                      <h3 className="font-semibold text-base sm:text-lg truncate">
                         {notification.subject}
                       </h3>
                       <Badge className={getStatusColor(notification.status)}>
                         {notification.status}
                       </Badge>
                     </div>
-                    <p className="text-gray-600 dark:text-gray-400 mb-2">
+                    <p className="text-gray-600 dark:text-gray-400 mb-2 text-sm line-clamp-2">
                       {notification.message}
                     </p>
-                    <p className="text-sm text-gray-500 dark:text-gray-500">
+                    <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-500">
                       {formatDistanceToNow(new Date(notification.created_at), {
                         addSuffix: true,
                       })}
                     </p>
                   </div>
 
-                  <div className="flex gap-2 ml-4">
+                  <div className="flex gap-2 flex-shrink-0">
                     {notification.status !== 'read' && (
                       <Button
                         onClick={() => handleMarkAsRead(notification.id)}
                         size="sm"
                         variant="outline"
+                        className="h-8 w-8 p-0"
                       >
                         <CheckSquare className="w-4 h-4" />
                       </Button>
@@ -157,7 +158,7 @@ export default function NotificationsIndex() {
                       onClick={() => handleDelete(notification.id)}
                       size="sm"
                       variant="ghost"
-                      className="text-red-600 hover:text-red-700"
+                      className="h-8 w-8 p-0 text-red-600 hover:text-red-700"
                     >
                       <Trash2 className="w-4 h-4" />
                     </Button>
