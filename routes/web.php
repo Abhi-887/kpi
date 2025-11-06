@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\QuoteController;
 use App\Http\Controllers\RateCardController;
 use App\Http\Controllers\ShipmentController;
@@ -28,6 +29,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Quotes routes
     Route::resource('quotes', QuoteController::class);
+
+    // Customers routes
+    Route::resource('customers', CustomerController::class);
 });
 
 require __DIR__.'/settings.php';
