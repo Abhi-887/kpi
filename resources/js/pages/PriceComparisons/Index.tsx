@@ -28,10 +28,10 @@ interface Comparison {
 }
 
 export default function PriceComparisonsIndex() {
-  const { comparisons, filters } = usePage().props as any
-  const [search, setSearch] = useState(filters.search || '')
-  const [status, setStatus] = useState(filters.status || '')
-  const [perPage, setPerPage] = useState(filters.per_page || 50)
+  const { comparisons = { data: [], total: 0, current_page: 1, last_page: 1 }, filters = { search: '', status: '', per_page: 10 } } = usePage().props as any
+  const [search, setSearch] = useState(filters?.search || '')
+  const [status, setStatus] = useState(filters?.status || '')
+  const [perPage, setPerPage] = useState(filters?.per_page || 10)
 
   const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Price Comparisons', href: '/price-comparisons' },

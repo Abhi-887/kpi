@@ -9,14 +9,27 @@ use Inertia\Inertia;
 
 class PriceComparisonController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $comparisons = PriceComparison::with(['user', 'rateCard'])
-            ->latest()
-            ->paginate(10);
+        $query = PriceComparison::with(['user', 'rateCard']);
+
+        if ($request->filled('search')) {
+            $query->where('login_id', 'like', "%{$request->search}%");
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $comparisons = $query->latest()->paginate($request->integer('per_page', 10));
 
         return Inertia::render('PriceComparisons/Index', [
             'comparisons' => $comparisons,
+            'filters' => [
+                'search' => $request->input('search', ''),
+                'status' => $request->input('status', ''),
+                'per_page' => $request->integer('per_page', 10),
+            ],
         ]);
     }
 
@@ -31,7 +44,7 @@ class PriceComparisonController extends Controller
 
     public function create()
     {
-        $rateCards = RateCard::where('is_active', true)->get();
+        $rateCards = RateCard::all();
 
         return Inertia::render('PriceComparisons/Create', [
             'rateCards' => $rateCards,
@@ -63,7 +76,7 @@ class PriceComparisonController extends Controller
 
     public function edit(PriceComparison $priceComparison)
     {
-        $rateCards = RateCard::where('is_active', true)->get();
+        $rateCards = RateCard::all();
 
         return Inertia::render('PriceComparisons/Edit', [
             'comparison' => $priceComparison,
