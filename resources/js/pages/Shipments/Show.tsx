@@ -100,7 +100,7 @@ export default function ShipmentsShow() {
                   {shipment.declared_value && (
                     <div>
                       <label className="text-sm text-gray-600">Declared Value</label>
-                      <p className="font-semibold">₹{shipment.declared_value}</p>
+                      <p className="font-semibold">₹{parseFloat(String(shipment.declared_value)).toFixed(2)}</p>
                     </div>
                   )}
                 </div>
@@ -168,19 +168,19 @@ export default function ShipmentsShow() {
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
                     <span className="text-gray-600">Base Freight</span>
-                    <span className="font-semibold">₹{shipment.base_freight?.toFixed(2) || '0.00'}</span>
+                    <span className="font-semibold">₹{shipment.base_freight ? parseFloat(String(shipment.base_freight)).toFixed(2) : '0.00'}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Handling Charge</span>
-                    <span className="font-semibold">₹{shipment.handling_charge?.toFixed(2) || '0.00'}</span>
+                    <span className="font-semibold">₹{shipment.handling_charge ? parseFloat(String(shipment.handling_charge)).toFixed(2) : '0.00'}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Tax (18%)</span>
-                    <span className="font-semibold">₹{shipment.tax?.toFixed(2) || '0.00'}</span>
+                    <span className="font-semibold">₹{shipment.tax ? parseFloat(String(shipment.tax)).toFixed(2) : '0.00'}</span>
                   </div>
                   <div className="border-t pt-2 flex justify-between">
                     <span className="font-bold">Total Cost</span>
-                    <span className="font-bold text-lg">₹{shipment.total_cost?.toFixed(2) || '0.00'}</span>
+                    <span className="font-bold text-lg">₹{shipment.total_cost ? parseFloat(String(shipment.total_cost)).toFixed(2) : '0.00'}</span>
                   </div>
                 </div>
               </CardContent>

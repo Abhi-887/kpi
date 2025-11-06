@@ -265,7 +265,7 @@ export default function ShipmentsIndex() {
                         </Badge>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap font-semibold">
-                        ₹{(shipment.total_cost as number).toFixed(2)}
+                        ₹{parseFloat(String(shipment.total_cost)).toFixed(2)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <Link
