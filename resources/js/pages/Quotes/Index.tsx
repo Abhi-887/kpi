@@ -112,12 +112,12 @@ export default function Index({ quotes, filters }: IndexProps) {
               </div>
 
               <div>
-                <Select value={status} onValueChange={setStatus}>
+                <Select value={status || 'all'} onValueChange={(value) => setStatus(value === 'all' ? '' : value)}>
                   <SelectTrigger className="dark:bg-gray-800 dark:text-white dark:border-gray-600">
                     <SelectValue placeholder="Status" />
                   </SelectTrigger>
                   <SelectContent className="dark:bg-gray-800 dark:text-white dark:border-gray-600">
-                    <SelectItem value="">All Status</SelectItem>
+                    <SelectItem value="all">All Status</SelectItem>
                     <SelectItem value="draft">Draft</SelectItem>
                     <SelectItem value="sent">Sent</SelectItem>
                     <SelectItem value="accepted">Accepted</SelectItem>
@@ -128,12 +128,12 @@ export default function Index({ quotes, filters }: IndexProps) {
               </div>
 
               <div>
-                <Select value={serviceType} onValueChange={setServiceType}>
+                <Select value={serviceType || 'all'} onValueChange={(value) => setServiceType(value === 'all' ? '' : value)}>
                   <SelectTrigger className="dark:bg-gray-800 dark:text-white dark:border-gray-600">
                     <SelectValue placeholder="Service Type" />
                   </SelectTrigger>
                   <SelectContent className="dark:bg-gray-800 dark:text-white dark:border-gray-600">
-                    <SelectItem value="">All Types</SelectItem>
+                    <SelectItem value="all">All Types</SelectItem>
                     <SelectItem value="standard">Standard</SelectItem>
                     <SelectItem value="express">Express</SelectItem>
                     <SelectItem value="overnight">Overnight</SelectItem>

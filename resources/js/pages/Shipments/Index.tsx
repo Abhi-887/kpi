@@ -130,11 +130,12 @@ export default function ShipmentsIndex() {
               {/* Status Filter */}
               <div className="space-y-2">
                 <label className="text-sm font-medium">Status</label>
-                <Select value={status} onValueChange={setStatus}>
+                <Select value={status || 'all'} onValueChange={(value) => setStatus(value === 'all' ? '' : value)}>
                   <SelectTrigger>
                     <SelectValue placeholder="All Status" />
                   </SelectTrigger>
                   <SelectContent>
+                    <SelectItem value="all">All Status</SelectItem>
                     <SelectItem value="pending">Pending</SelectItem>
                     <SelectItem value="in_transit">In Transit</SelectItem>
                     <SelectItem value="delivered">Delivered</SelectItem>
@@ -147,11 +148,12 @@ export default function ShipmentsIndex() {
               {/* Origin City */}
               <div className="space-y-2">
                 <label className="text-sm font-medium">From City</label>
-                <Select value={originCity} onValueChange={setOriginCity}>
+                <Select value={originCity || 'all'} onValueChange={(value) => setOriginCity(value === 'all' ? '' : value)}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select city" />
                   </SelectTrigger>
                   <SelectContent>
+                    <SelectItem value="all">All Cities</SelectItem>
                     {origins.map((city: string) => (
                       <SelectItem key={city} value={city}>
                         {city}
@@ -164,11 +166,12 @@ export default function ShipmentsIndex() {
               {/* Destination City */}
               <div className="space-y-2">
                 <label className="text-sm font-medium">To City</label>
-                <Select value={destCity} onValueChange={setDestCity}>
+                <Select value={destCity || 'all'} onValueChange={(value) => setDestCity(value === 'all' ? '' : value)}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select city" />
                   </SelectTrigger>
                   <SelectContent>
+                    <SelectItem value="all">All Cities</SelectItem>
                     {destinations.map((city: string) => (
                       <SelectItem key={city} value={city}>
                         {city}
