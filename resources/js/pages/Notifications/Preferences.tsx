@@ -37,22 +37,29 @@ export default function NotificationPreferences() {
   const { preferences } = usePage<Props>().props
 
   return (
-    <AppLayout>
-      <div className="max-w-2xl">
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold tracking-tight">
+    <AppLayout
+      breadcrumbs={[
+        { title: 'Notifications', href: '/notifications' },
+        { title: 'Preferences', href: '/notifications/preferences' },
+      ]}
+    >
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
             Notification Preferences
           </h1>
-          <p className="text-gray-500 dark:text-gray-400 mt-1">
-            Manage how you receive notifications
+          <p className="text-gray-500 dark:text-gray-400 mt-1 sm:mt-2">
+            Manage how you receive notifications across different channels
           </p>
         </div>
 
         <Form method="patch" action="/notifications/preferences">
-          <div className="space-y-8">
+          <div className="space-y-6 sm:space-y-8">
             {/* Email Preferences */}
-            <div className="bg-white dark:bg-gray-900 p-6 rounded-lg border border-gray-200 dark:border-gray-800">
-              <h2 className="text-xl font-semibold mb-4">Email Notifications</h2>
+            <div className="bg-white dark:bg-gray-900 p-4 sm:p-6 rounded-lg border border-gray-200 dark:border-gray-800">
+              <h2 className="text-lg sm:text-xl font-semibold mb-4">
+                📧 Email Notifications
+              </h2>
               <div className="space-y-3">
                 <div className="flex items-center gap-3">
                   <Checkbox
@@ -61,7 +68,10 @@ export default function NotificationPreferences() {
                     defaultChecked={preferences.email_shipment_created}
                     value="1"
                   />
-                  <Label htmlFor="email_shipment_created">
+                  <Label 
+                    htmlFor="email_shipment_created"
+                    className="cursor-pointer text-sm sm:text-base"
+                  >
                     Shipment Created
                   </Label>
                 </div>
@@ -72,7 +82,10 @@ export default function NotificationPreferences() {
                     defaultChecked={preferences.email_shipment_updates}
                     value="1"
                   />
-                  <Label htmlFor="email_shipment_updates">
+                  <Label 
+                    htmlFor="email_shipment_updates"
+                    className="cursor-pointer text-sm sm:text-base"
+                  >
                     Shipment Updates (In Transit, Exceptions)
                   </Label>
                 </div>
@@ -83,7 +96,12 @@ export default function NotificationPreferences() {
                     defaultChecked={preferences.email_delivery}
                     value="1"
                   />
-                  <Label htmlFor="email_delivery">Shipment Delivery</Label>
+                  <Label 
+                    htmlFor="email_delivery"
+                    className="cursor-pointer text-sm sm:text-base"
+                  >
+                    Shipment Delivery
+                  </Label>
                 </div>
                 <div className="flex items-center gap-3">
                   <Checkbox
@@ -92,7 +110,12 @@ export default function NotificationPreferences() {
                     defaultChecked={preferences.email_order_updates}
                     value="1"
                   />
-                  <Label htmlFor="email_order_updates">Order Updates</Label>
+                  <Label 
+                    htmlFor="email_order_updates"
+                    className="cursor-pointer text-sm sm:text-base"
+                  >
+                    Order Updates
+                  </Label>
                 </div>
                 <div className="flex items-center gap-3">
                   <Checkbox
@@ -101,7 +124,10 @@ export default function NotificationPreferences() {
                     defaultChecked={preferences.email_payment_updates}
                     value="1"
                   />
-                  <Label htmlFor="email_payment_updates">
+                  <Label 
+                    htmlFor="email_payment_updates"
+                    className="cursor-pointer text-sm sm:text-base"
+                  >
                     Payment Updates
                   </Label>
                 </div>
@@ -109,8 +135,10 @@ export default function NotificationPreferences() {
             </div>
 
             {/* SMS Preferences */}
-            <div className="bg-white dark:bg-gray-900 p-6 rounded-lg border border-gray-200 dark:border-gray-800">
-              <h2 className="text-xl font-semibold mb-4">SMS Notifications</h2>
+            <div className="bg-white dark:bg-gray-900 p-4 sm:p-6 rounded-lg border border-gray-200 dark:border-gray-800">
+              <h2 className="text-lg sm:text-xl font-semibold mb-4">
+                💬 SMS Notifications
+              </h2>
               <div className="space-y-3">
                 <div className="flex items-center gap-3">
                   <Checkbox
@@ -119,7 +147,12 @@ export default function NotificationPreferences() {
                     defaultChecked={preferences.sms_shipment_created}
                     value="1"
                   />
-                  <Label htmlFor="sms_shipment_created">Shipment Created</Label>
+                  <Label 
+                    htmlFor="sms_shipment_created"
+                    className="cursor-pointer text-sm sm:text-base"
+                  >
+                    Shipment Created
+                  </Label>
                 </div>
                 <div className="flex items-center gap-3">
                   <Checkbox
@@ -128,7 +161,10 @@ export default function NotificationPreferences() {
                     defaultChecked={preferences.sms_shipment_updates}
                     value="1"
                   />
-                  <Label htmlFor="sms_shipment_updates">
+                  <Label 
+                    htmlFor="sms_shipment_updates"
+                    className="cursor-pointer text-sm sm:text-base"
+                  >
                     Shipment Updates
                   </Label>
                 </div>
@@ -139,14 +175,21 @@ export default function NotificationPreferences() {
                     defaultChecked={preferences.sms_delivery}
                     value="1"
                   />
-                  <Label htmlFor="sms_delivery">Delivery Notifications</Label>
+                  <Label 
+                    htmlFor="sms_delivery"
+                    className="cursor-pointer text-sm sm:text-base"
+                  >
+                    Delivery Notifications
+                  </Label>
                 </div>
               </div>
             </div>
 
             {/* In-App Preferences */}
-            <div className="bg-white dark:bg-gray-900 p-6 rounded-lg border border-gray-200 dark:border-gray-800">
-              <h2 className="text-xl font-semibold mb-4">In-App Notifications</h2>
+            <div className="bg-white dark:bg-gray-900 p-4 sm:p-6 rounded-lg border border-gray-200 dark:border-gray-800">
+              <h2 className="text-lg sm:text-xl font-semibold mb-4">
+                🔔 In-App Notifications
+              </h2>
               <div className="flex items-center gap-3">
                 <Checkbox
                   id="in_app_all"
@@ -154,47 +197,61 @@ export default function NotificationPreferences() {
                   defaultChecked={preferences.in_app_all}
                   value="1"
                 />
-                <Label htmlFor="in_app_all">
+                <Label 
+                  htmlFor="in_app_all"
+                  className="cursor-pointer text-sm sm:text-base"
+                >
                   Enable all in-app notifications
                 </Label>
               </div>
             </div>
 
             {/* Frequency */}
-            <div className="bg-white dark:bg-gray-900 p-6 rounded-lg border border-gray-200 dark:border-gray-800">
-              <h2 className="text-xl font-semibold mb-4">Notification Frequency</h2>
-              <div className="space-y-2">
-                <Label htmlFor="notification_frequency">
-                  Delivery Frequency
-                </Label>
-                <Select
-                  name="notification_frequency"
-                  defaultValue={preferences.notification_frequency}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="immediate">Immediate</SelectItem>
-                    <SelectItem value="daily">Daily Digest</SelectItem>
-                    <SelectItem value="weekly">Weekly Digest</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="mt-4 flex items-center gap-3">
-                <Checkbox
-                  id="digest_enabled"
-                  name="digest_enabled"
-                  defaultChecked={preferences.digest_enabled}
-                  value="1"
-                />
-                <Label htmlFor="digest_enabled">Enable digest emails</Label>
+            <div className="bg-white dark:bg-gray-900 p-4 sm:p-6 rounded-lg border border-gray-200 dark:border-gray-800">
+              <h2 className="text-lg sm:text-xl font-semibold mb-4">
+                ⏱️ Notification Frequency
+              </h2>
+              <div className="space-y-3 sm:space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="notification_frequency" className="text-sm sm:text-base">
+                    Delivery Frequency
+                  </Label>
+                  <Select
+                    name="notification_frequency"
+                    defaultValue={preferences.notification_frequency}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="immediate">Immediate</SelectItem>
+                      <SelectItem value="daily">Daily Digest</SelectItem>
+                      <SelectItem value="weekly">Weekly Digest</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Checkbox
+                    id="digest_enabled"
+                    name="digest_enabled"
+                    defaultChecked={preferences.digest_enabled}
+                    value="1"
+                  />
+                  <Label 
+                    htmlFor="digest_enabled"
+                    className="cursor-pointer text-sm sm:text-base"
+                  >
+                    Enable digest emails
+                  </Label>
+                </div>
               </div>
             </div>
 
             {/* Save Button */}
-            <div className="flex gap-2">
-              <Button type="submit">Save Preferences</Button>
+            <div className="flex gap-2 pt-4">
+              <Button type="submit" size="lg">
+                Save Preferences
+              </Button>
             </div>
           </div>
         </Form>
