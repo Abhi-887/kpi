@@ -61,15 +61,14 @@ class DashboardController extends Controller
             ->pluck('amount', 'month');
 
         // Top Customers by Revenue
-        $topCustomers = Customer::with('invoices')
-            ->whereBetween('customers.created_at', [$startDate, $endDate])
-            ->selectRaw('customers.*, SUM(COALESCE(invoices.total_amount, 0)) as total_revenue')
+        $topCustomers = Customer::query()
+            ->selectRaw('customers.id, customers.company_name, customers.email, SUM(COALESCE(invoices.total_amount, 0)) as total_revenue')
             ->leftJoin('invoices', 'customers.id', '=', 'invoices.customer_id')
             ->whereBetween('invoices.created_at', [$startDate, $endDate])
-            ->groupBy('customers.id')
+            ->groupBy('customers.id', 'customers.company_name', 'customers.email')
             ->orderByDesc('total_revenue')
             ->limit(5)
-            ->get(['customers.id', 'customers.company_name', 'customers.contact_email']);
+            ->get();
 
         // Invoice Status Distribution
         $invoicesByStatus = Invoice::whereBetween('created_at', [$startDate, $endDate])
@@ -82,7 +81,7 @@ class DashboardController extends Controller
 
         // Average Shipment Cost
         $averageShipmentCost = Shipment::whereBetween('created_at', [$startDate, $endDate])
-            ->avg('shipping_cost') ?? 0;
+            ->avg('base_freight') ?? 0;
 
         return Inertia::render('Dashboard/Index', [
             'metrics' => [
@@ -118,8 +117,8 @@ class DashboardController extends Controller
             'topCustomers' => $topCustomers->map(fn ($customer) => [
                 'id' => $customer->id,
                 'company_name' => $customer->company_name,
-                'contact_email' => $customer->contact_email,
-                'total_revenue' => $customer->total_revenue ?? 0,
+                'contact_email' => $customer->email,
+                'total_revenue' => (float) ($customer->total_revenue ?? 0),
             ]),
             'dateRange' => [
                 'start_date' => $startDate->format('Y-m-d'),
