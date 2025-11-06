@@ -1,12 +1,16 @@
 <?php
 
 use App\Http\Controllers\AuditLogController;
+use App\Http\Controllers\CourierPriceController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ForwardingPriceController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\IntegrationController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\PackagingPriceController;
+use App\Http\Controllers\PriceComparisonController;
 use App\Http\Controllers\QuoteController;
 use App\Http\Controllers\RateCardController;
 use App\Http\Controllers\ShipmentController;
@@ -86,6 +90,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('audit-logs/{auditLog}', [AuditLogController::class, 'show'])->name('audit-logs.show');
         Route::get('audit-logs/export/csv', [AuditLogController::class, 'export'])->name('audit-logs.export');
     });
+
+    // Price Comparison routes
+    Route::resource('price-comparisons', PriceComparisonController::class);
+
+    // Pricing modules
+    Route::resource('forwarding-prices', ForwardingPriceController::class);
+    Route::resource('courier-prices', CourierPriceController::class);
+    Route::resource('packaging-prices', PackagingPriceController::class);
 });
 
 require __DIR__.'/settings.php';

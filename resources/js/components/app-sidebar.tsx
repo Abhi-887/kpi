@@ -13,7 +13,7 @@ import {
 import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid, Package, DollarSign, FileText, Users, ShoppingCart, Receipt, Bell, Zap, Settings, History } from 'lucide-react';
+import { BookOpen, Folder, LayoutGrid, Package, DollarSign, FileText, Users, ShoppingCart, Receipt, Bell, Zap, Settings, History, TrendingUp } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
@@ -71,6 +71,26 @@ const mainNavItems: NavItem[] = [
         title: 'Audit Logs',
         href: '/audit-logs',
         icon: History,
+    },
+    {
+        title: 'Price Comparison',
+        href: '/price-comparisons',
+        icon: TrendingUp,
+    },
+    {
+        title: 'Forwarding Prices',
+        href: '/forwarding-prices',
+        icon: DollarSign,
+    },
+    {
+        title: 'Courier Prices',
+        href: '/courier-prices',
+        icon: DollarSign,
+    },
+    {
+        title: 'Packaging Prices',
+        href: '/packaging-prices',
+        icon: DollarSign,
     },
 ];
 
