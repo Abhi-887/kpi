@@ -4,6 +4,7 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\IntegrationController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\QuoteController;
 use App\Http\Controllers\RateCardController;
@@ -64,6 +65,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // APIs
         Route::post('track-shipment', [IntegrationController::class, 'trackShipment'])->name('integrations.track');
         Route::post('process-payment', [IntegrationController::class, 'processPayment'])->name('integrations.payment');
+    });
+
+    // Notifications routes
+    Route::prefix('notifications')->group(function () {
+        Route::get('', [NotificationController::class, 'index'])->name('notifications.index');
+        Route::get('preferences', [NotificationController::class, 'preferences'])->name('notifications.preferences');
+        Route::patch('preferences', [NotificationController::class, 'updatePreferences'])->name('notifications.update-preferences');
+        Route::patch('{notification}/mark-as-read', [NotificationController::class, 'markAsRead'])->name('notifications.mark-as-read');
+        Route::patch('mark-all-as-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.mark-all-as-read');
+        Route::delete('{notification}', [NotificationController::class, 'delete'])->name('notifications.delete');
+        Route::post('clear', [NotificationController::class, 'clear'])->name('notifications.clear');
+        Route::post('test', [NotificationController::class, 'testNotification'])->name('notifications.test');
     });
 });
 
