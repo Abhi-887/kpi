@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 use Symfony\Component\HttpFoundation\Response;
 
 class CheckRole
@@ -21,6 +22,10 @@ class CheckRole
             return $next($request);
         }
 
-        return response()->json(['message' => 'Forbidden'], 403);
+        return Inertia::render('Error', [
+            'status' => 403,
+            'title' => 'Access Denied',
+            'message' => 'You do not have permission to access this resource.',
+        ])->toResponse($request)->setStatusCode(403);
     }
 }
