@@ -3,6 +3,7 @@
 use App\Http\Controllers\Settings\PasswordController;
 use App\Http\Controllers\Settings\ProfileController;
 use App\Http\Controllers\Settings\TwoFactorAuthenticationController;
+use App\Http\Controllers\SettingsController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -25,4 +26,12 @@ Route::middleware('auth')->group(function () {
 
     Route::get('settings/two-factor', [TwoFactorAuthenticationController::class, 'show'])
         ->name('two-factor.show');
+
+    // System Settings (Admin only)
+    Route::middleware('role:admin')->group(function () {
+        Route::get('admin/settings', [SettingsController::class, 'index'])->name('admin.settings.index');
+        Route::patch('admin/settings', [SettingsController::class, 'update'])->name('admin.settings.update');
+        Route::post('admin/settings/reset', [SettingsController::class, 'reset'])->name('admin.settings.reset');
+    });
 });
+
