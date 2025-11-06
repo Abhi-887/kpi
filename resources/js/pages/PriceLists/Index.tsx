@@ -29,30 +29,33 @@ export default function PriceListsIndex() {
             <CardTitle>Price Lists ({priceLists?.data?.length || 0})</CardTitle>
           </CardHeader>
           <CardContent>
-            <table className="w-full text-sm">
-              <thead className="border-b">
-                <tr>
-                  <th className="text-left py-2 px-2">Item ID</th>
-                  <th className="text-right py-2 px-2">Base Price</th>
-                  <th className="text-right py-2 px-2">Min Qty</th>
-                  <th className="text-right py-2 px-2">Max Qty</th>
-                  <th className="text-right py-2 px-2">Discount %</th>
-                  <th className="text-left py-2 px-2">Customer Group</th>
-                </tr>
-              </thead>
-              <tbody>
-                {priceLists?.data?.map((pl: any) => (
-                  <tr key={pl.id} className="border-b hover:bg-muted/30">
-                    <td className="py-2 px-2">{pl.item_id}</td>
-                    <td className="py-2 px-2 text-right">₹{Number(pl.base_price).toFixed(2)}</td>
-                    <td className="py-2 px-2 text-right">{pl.min_qty}</td>
-                    <td className="py-2 px-2 text-right">{pl.max_qty || '∞'}</td>
-                    <td className="py-2 px-2 text-right">{pl.discount_percent}%</td>
-                    <td className="py-2 px-2">{pl.customer_group || 'General'}</td>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead className="border-b bg-muted/50">
+                  <tr>
+                    <th className="text-left py-3 px-4 font-medium">Item ID</th>
+                    <th className="text-right py-3 px-4 font-medium">Base Price</th>
+                    <th className="text-right py-3 px-4 font-medium">Min Qty</th>
+                    <th className="text-right py-3 px-4 font-medium">Max Qty</th>
+                    <th className="text-right py-3 px-4 font-medium">Discount %</th>
+                    <th className="text-left py-3 px-4 font-medium">Customer Group</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {priceLists?.data?.map((pl: any) => (
+                    <tr key={pl.id} className="border-b hover:bg-muted/30">
+                      <td className="py-3 px-4">{pl.item_id}</td>
+                      <td className="py-3 px-4 text-right">₹{Number(pl.base_price).toFixed(2)}</td>
+                      <td className="py-3 px-4 text-right">{pl.min_qty}</td>
+                      <td className="py-3 px-4 text-right">{pl.max_qty || '∞'}</td>
+                      <td className="py-3 px-4 text-right">{pl.discount_percent}%</td>
+                      <td className="py-3 px-4">{pl.customer_group || 'General'}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            {priceLists?.data?.length === 0 && <div className="text-center py-8 text-muted-foreground">No price lists found</div>}
           </CardContent>
         </Card>
       </div>

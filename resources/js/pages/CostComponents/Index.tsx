@@ -29,28 +29,31 @@ export default function CostComponentsIndex() {
             <CardTitle>Cost Components ({costComponents?.data?.length || 0})</CardTitle>
           </CardHeader>
           <CardContent>
-            <table className="w-full text-sm">
-              <thead className="border-b">
-                <tr>
-                  <th className="text-left py-2 px-2">Item ID</th>
-                  <th className="text-left py-2 px-2">Type</th>
-                  <th className="text-right py-2 px-2">Unit Cost</th>
-                  <th className="text-right py-2 px-2">Factor</th>
-                  <th className="text-left py-2 px-2">Effective From</th>
-                </tr>
-              </thead>
-              <tbody>
-                {costComponents?.data?.map((cc: any) => (
-                  <tr key={cc.id} className="border-b hover:bg-muted/30">
-                    <td className="py-2 px-2">{cc.item_id}</td>
-                    <td className="py-2 px-2">{cc.component_type}</td>
-                    <td className="py-2 px-2 text-right">₹{Number(cc.unit_cost).toFixed(2)}</td>
-                    <td className="py-2 px-2 text-right">{Number(cc.quantity_factor).toFixed(4)}</td>
-                    <td className="py-2 px-2">{cc.effective_from}</td>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead className="border-b bg-muted/50">
+                  <tr>
+                    <th className="text-left py-3 px-4 font-medium">Item ID</th>
+                    <th className="text-left py-3 px-4 font-medium">Type</th>
+                    <th className="text-right py-3 px-4 font-medium">Unit Cost</th>
+                    <th className="text-right py-3 px-4 font-medium">Factor</th>
+                    <th className="text-left py-3 px-4 font-medium">Effective From</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {costComponents?.data?.map((cc: any) => (
+                    <tr key={cc.id} className="border-b hover:bg-muted/30">
+                      <td className="py-3 px-4">{cc.item_id}</td>
+                      <td className="py-3 px-4">{cc.component_type}</td>
+                      <td className="py-3 px-4 text-right">₹{Number(cc.unit_cost).toFixed(2)}</td>
+                      <td className="py-3 px-4 text-right">{Number(cc.quantity_factor).toFixed(4)}</td>
+                      <td className="py-3 px-4">{cc.effective_from}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            {costComponents?.data?.length === 0 && <div className="text-center py-8 text-muted-foreground">No cost components found</div>}
           </CardContent>
         </Card>
       </div>

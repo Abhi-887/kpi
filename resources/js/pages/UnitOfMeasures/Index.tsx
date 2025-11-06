@@ -29,26 +29,29 @@ export default function UnitOfMeasuresIndex() {
             <CardTitle>Unit of Measures ({units?.data?.length || 0})</CardTitle>
           </CardHeader>
           <CardContent>
-            <table className="w-full text-sm">
-              <thead className="border-b">
-                <tr>
-                  <th className="text-left py-2 px-2">Name</th>
-                  <th className="text-left py-2 px-2">Symbol</th>
-                  <th className="text-left py-2 px-2">Category</th>
-                  <th className="text-right py-2 px-2">Factor</th>
-                </tr>
-              </thead>
-              <tbody>
-                {units?.data?.map((unit: any) => (
-                  <tr key={unit.id} className="border-b hover:bg-muted/30">
-                    <td className="py-2 px-2">{unit.name}</td>
-                    <td className="py-2 px-2 font-mono">{unit.symbol}</td>
-                    <td className="py-2 px-2">{unit.category}</td>
-                    <td className="py-2 px-2 text-right">{unit.conversion_factor}</td>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead className="border-b bg-muted/50">
+                  <tr>
+                    <th className="text-left py-3 px-4 font-medium">Name</th>
+                    <th className="text-left py-3 px-4 font-medium">Symbol</th>
+                    <th className="text-left py-3 px-4 font-medium">Category</th>
+                    <th className="text-right py-3 px-4 font-medium">Factor</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {units?.data?.map((unit: any) => (
+                    <tr key={unit.id} className="border-b hover:bg-muted/30">
+                      <td className="py-3 px-4">{unit.name}</td>
+                      <td className="py-3 px-4 font-mono">{unit.symbol}</td>
+                      <td className="py-3 px-4">{unit.category}</td>
+                      <td className="py-3 px-4 text-right">{unit.conversion_factor}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            {units?.data?.length === 0 && <div className="text-center py-8 text-muted-foreground">No units found</div>}
           </CardContent>
         </Card>
       </div>
