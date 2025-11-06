@@ -28,5 +28,8 @@ class DatabaseSeeder extends Seeder
 
         // Assign Admin role to test user
         $user->assignRole('admin');
+
+        // Seed shipments
+        $this->call(ShipmentSeeder::class);
     }
 }
