@@ -17,32 +17,15 @@ class RateEngine
     /**
      * Find all matching costs for a shipment
      * 
-     * @param array $shipmentDetails {
-     *     @var string $origin_port_id Origin location ID
-     *     @var string $destination_port_id Destination location ID
-     *     @var string $mode Transportation mode (AIR, SEA, ROAD, RAIL, MULTIMODAL)
-     *     @var string $movement Type of movement (IMPORT, EXPORT, DOMESTIC, INTER_MODAL)
-     *     @var string $terms Incoterms (EXW, FCA, CPT, CIP, DAP, DDP, FOB, CFR, CIF)
-     *     @var float $chargeable_weight Weight in the UOM for calculation
-     *     @var string|null $date Date to check validity (defaults to today)
-     * }
-     * @return Collection Grouped costs by vendor {
-     *     @property int vendor_id
-     *     @property string vendor_name
-     *     @property string route
-     *     @property array charges [
-     *         {
-     *             @property int charge_id
-     *             @property string charge_name
-     *             @property float slab_min
-     *             @property float slab_max
-     *             @property float cost_rate
-     *             @property string currency
-     *             @property bool is_fixed_rate
-     *             @property string uom_symbol
-     *         }
-     *     ]
-     * }
+     * @param array $shipmentDetails Shipment details array with keys:
+     *              - origin_port_id: Origin location ID
+     *              - destination_port_id: Destination location ID
+     *              - mode: Transportation mode (AIR, SEA, ROAD, RAIL, MULTIMODAL)
+     *              - movement: Type of movement (IMPORT, EXPORT, DOMESTIC, INTER_MODAL)
+     *              - terms: Incoterms (EXW, FCA, CPT, CIP, DAP, DDP, FOB, CFR, CIF)
+     *              - chargeable_weight: Weight in the UOM for calculation
+     *              - date: Date to check validity (defaults to today)
+     * @return Collection Grouped costs by vendor with vendor_id, vendor_name, route, mode, movement, terms, charges
      */
     public function findMatchingCosts(array $shipmentDetails): Collection
     {
@@ -140,7 +123,7 @@ class RateEngine
         $issues = [];
 
         // Check if dates are valid
-        if ($header->valid_from->greaterThan($header->valid_upto)) {
+        if ($header->valid_from->format('Y-m-d') > $header->valid_upto->format('Y-m-d')) {
             $issues[] = 'Valid From date is after Valid Upto date';
         }
 
