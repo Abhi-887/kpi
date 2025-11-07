@@ -11,6 +11,7 @@ use App\Http\Controllers\ForwardingPriceController;
 use App\Http\Controllers\IntegrationController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\ItemController;
+use App\Http\Controllers\LocationController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PackagingPriceController;
@@ -42,6 +43,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('tax-codes', TaxCodeController::class);
     Route::resource('charges', ChargeController::class);
     Route::resource('container-types', ContainerTypeController::class);
+    Route::resource('ports', LocationController::class);
+    Route::post('ports/bulk-import', [LocationController::class, 'bulkImport'])->name('ports.bulk-import');
     Route::resource('suppliers', SupplierController::class);
     Route::resource('cost-components', CostComponentController::class);
     Route::resource('price-lists', PriceListController::class);
