@@ -15,7 +15,7 @@ import { useAlert } from '@/hooks/use-alert'
 import { AlertContainer } from '@/components/alert-container'
 
 interface ContainerType {
-  id: number
+  container_type_id: number
   container_code: string
   description: string
   is_active: boolean
@@ -115,7 +115,7 @@ export default function ContainerTypesIndex() {
     setErrors({})
 
     try {
-      const response = await fetch(`/container-types/${selectedContainerType.id}`, {
+      const response = await fetch(`/container-types/${selectedContainerType.container_type_id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -156,16 +156,28 @@ export default function ContainerTypesIndex() {
     setIsLoading(true)
 
     try {
-      const response = await fetch(`/container-types/${selectedContainerType.id}`, {
+      const response = await fetch(`/container-types/${selectedContainerType.container_type_id}`, {
         method: 'DELETE',
         headers: {
+          'Content-Type': 'application/json',
           'X-Requested-With': 'XMLHttpRequest',
           'X-CSRF-TOKEN': csrf_token,
         },
       })
 
+      let data = null
+      try {
+        data = await response.json()
+      } catch {
+        // Response might be empty for 204 No Content
+        if (response.status === 204) {
+          data = { success: true }
+        }
+      }
+
       if (!response.ok) {
-        showError('Failed to delete', 'An error occurred while deleting')
+        console.error('Delete error response:', { status: response.status, data })
+        showError('Failed to delete', data?.message || 'An error occurred while deleting')
         return
       }
 
@@ -173,7 +185,7 @@ export default function ContainerTypesIndex() {
       success(`Container type ${selectedContainerType.container_code} deleted successfully`)
       router.reload()
     } catch (error) {
-      console.error('Error:', error)
+      console.error('Delete error:', error)
       showError('Failed to delete container type', 'An unexpected error occurred')
     } finally {
       setIsLoading(false)
@@ -210,7 +222,7 @@ export default function ContainerTypesIndex() {
                 </thead>
                 <tbody>
                   {containerTypes?.map((containerType: ContainerType) => (
-                    <tr key={containerType.id} className="border-b hover:bg-muted/30">
+                    <tr key={containerType.container_type_id} className="border-b hover:bg-muted/30">
                       <td className="py-3 px-4 font-mono font-bold text-primary">{containerType.container_code}</td>
                       <td className="py-3 px-4">{containerType.description}</td>
                       <td className="py-3 px-4 text-center">

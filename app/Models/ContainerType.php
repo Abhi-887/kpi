@@ -10,6 +10,8 @@ class ContainerType extends Model
 {
     use HasFactory;
 
+    protected $primaryKey = 'container_type_id';
+
     protected $fillable = [
         'container_code',
         'description',

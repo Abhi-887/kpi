@@ -8,7 +8,7 @@ test('can create a container type', function () {
         'description' => '20ft General Purpose',
     ]);
 
-    expect($containerType)->id->toBeGreaterThan(0)
+    expect($containerType)->container_type_id->toBeGreaterThan(0)
         ->and($containerType->container_code)->toBe('20GP')
         ->and($containerType->description)->toBe('20ft General Purpose')
         ->and($containerType->is_active)->toBeTrue();
@@ -44,4 +44,20 @@ test('container type can have pricing charges relationship', function () {
     $containerType = ContainerType::factory()->create();
 
     expect($containerType->pricingCharges())->toBeInstanceOf(\Illuminate\Database\Eloquent\Relations\HasMany::class);
+});
+
+test('can delete a container type', function () {
+    $user = \App\Models\User::factory()->create();
+
+    $containerType = ContainerType::factory()->create(['container_code' => 'DELTEST']);
+
+    $response = $this->actingAs($user)->deleteJson(route('container-types.destroy', $containerType->container_type_id));
+
+    $response->assertSuccessful()
+        ->assertJsonPath('success', true)
+        ->assertJsonPath('message', 'Container type DELTEST deleted successfully');
+
+    $this->assertDatabaseMissing('container_types', [
+        'container_type_id' => $containerType->container_type_id,
+    ]);
 });

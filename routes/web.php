@@ -22,6 +22,7 @@ use App\Http\Controllers\ShipmentController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\TaxCodeController;
 use App\Http\Controllers\UnitOfMeasureController;
+use App\Http\Controllers\VendorRateController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
@@ -52,6 +53,23 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Rate Cards routes
     Route::resource('rate-cards', RateCardController::class);
+
+    // Vendor Rates Management (Rate Engine)
+    Route::prefix('vendor-rates')->group(function () {
+        Route::get('', [VendorRateController::class, 'index'])->name('vendor-rates.index');
+        Route::get('create', [VendorRateController::class, 'create'])->name('vendor-rates.create');
+        Route::post('', [VendorRateController::class, 'store'])->name('vendor-rates.store');
+        Route::get('{vendorRate}', [VendorRateController::class, 'show'])->name('vendor-rates.show');
+        Route::get('{vendorRate}/edit', [VendorRateController::class, 'edit'])->name('vendor-rates.edit');
+        Route::patch('{vendorRate}', [VendorRateController::class, 'update'])->name('vendor-rates.update');
+        Route::delete('{vendorRate}', [VendorRateController::class, 'destroy'])->name('vendor-rates.destroy');
+
+        // API endpoints for Rate Engine
+        Route::post('find-matching-costs', [VendorRateController::class, 'findMatchingCosts'])->name('vendor-rates.find-costs');
+        Route::get('rates-for-charge', [VendorRateController::class, 'ratesForCharge'])->name('vendor-rates.charge-rates');
+        Route::post('{vendorRate}/validate', [VendorRateController::class, 'validateRate'])->name('vendor-rates.validate');
+        Route::post('{vendorRate}/calculate-cost', [VendorRateController::class, 'calculateVendorCost'])->name('vendor-rates.calculate-cost');
+    });
 
     // Quotes routes
     Route::resource('quotes', QuoteController::class);

@@ -20,12 +20,12 @@ return new class extends Migration
             $table->decimal('slab_min', 10, 2)->comment('Minimum slab value (e.g., 0, 100, 250)');
             $table->decimal('slab_max', 10, 2)->comment('Maximum slab value (e.g., 99, 249, 500)');
             $table->decimal('cost_rate', 12, 4)->comment('The actual rate/cost');
-            $table->boolean('is_fixed_rate')->default(false)->comment('TRUE if it\'s a PER BL fixed cost');
+            $table->boolean('is_fixed_rate')->default(false)->comment('TRUE if it is a PER BL fixed cost');
             $table->integer('sequence')->default(0)->comment('Display order');
             $table->boolean('is_active')->default(true);
             $table->text('notes')->nullable();
             $table->timestamps();
-            $table->unique(['rate_header_id', 'charge_id', 'slab_min', 'slab_max', 'uom_id']);
+            $table->unique(['rate_header_id', 'charge_id', 'slab_min', 'slab_max', 'uom_id'], 'vrlines_header_charge_slab_uom_unique');
             $table->index(['charge_id', 'slab_min', 'slab_max']);
         });
     }

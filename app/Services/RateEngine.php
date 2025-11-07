@@ -8,7 +8,7 @@ use Illuminate\Support\Collection;
 
 /**
  * Rate Management Engine
- * 
+ *
  * Central high-speed query engine for all vendor costs.
  * Primary responsibility: Answer the question - "For this specific shipment, what are the costs from all my vendors?"
  */
@@ -16,15 +16,15 @@ class RateEngine
 {
     /**
      * Find all matching costs for a shipment
-     * 
-     * @param array $shipmentDetails Shipment details array with keys:
-     *              - origin_port_id: Origin location ID
-     *              - destination_port_id: Destination location ID
-     *              - mode: Transportation mode (AIR, SEA, ROAD, RAIL, MULTIMODAL)
-     *              - movement: Type of movement (IMPORT, EXPORT, DOMESTIC, INTER_MODAL)
-     *              - terms: Incoterms (EXW, FCA, CPT, CIP, DAP, DDP, FOB, CFR, CIF)
-     *              - chargeable_weight: Weight in the UOM for calculation
-     *              - date: Date to check validity (defaults to today)
+     *
+     * @param  array  $shipmentDetails  Shipment details array with keys:
+     *                                  - origin_port_id: Origin location ID
+     *                                  - destination_port_id: Destination location ID
+     *                                  - mode: Transportation mode (AIR, SEA, ROAD, RAIL, MULTIMODAL)
+     *                                  - movement: Type of movement (IMPORT, EXPORT, DOMESTIC, INTER_MODAL)
+     *                                  - terms: Incoterms (EXW, FCA, CPT, CIP, DAP, DDP, FOB, CFR, CIF)
+     *                                  - chargeable_weight: Weight in the UOM for calculation
+     *                                  - date: Date to check validity (defaults to today)
      * @return Collection Grouped costs by vendor with vendor_id, vendor_name, route, mode, movement, terms, charges
      */
     public function findMatchingCosts(array $shipmentDetails): Collection
@@ -60,7 +60,7 @@ class RateEngine
                 'terms' => $header->terms,
                 'valid_from' => $header->valid_from,
                 'valid_upto' => $header->valid_upto,
-                'charges' => $matchingLines->map(function (VendorRateLine $line) use ($chargeableWeight) {
+                'charges' => $matchingLines->map(function (VendorRateLine $line) {
                     return [
                         'rate_line_id' => $line->id,
                         'charge_id' => $line->charge_id,
@@ -123,7 +123,7 @@ class RateEngine
         $issues = [];
 
         // Check if dates are valid
-        if ($header->valid_from->format('Y-m-d') > $header->valid_upto->format('Y-m-d')) {
+        if ($header->valid_from->lte($header->valid_upto) === false) {
             $issues[] = 'Valid From date is after Valid Upto date';
         }
 

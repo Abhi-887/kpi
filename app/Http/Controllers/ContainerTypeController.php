@@ -6,6 +6,7 @@ use App\Http\Requests\StoreContainerTypeRequest;
 use App\Http\Requests\UpdateContainerTypeRequest;
 use App\Models\ContainerType;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -63,11 +64,24 @@ class ContainerTypeController extends Controller
 
     public function destroy(ContainerType $containerType): JsonResponse
     {
-        $containerType->delete();
+        try {
+            $code = $containerType->container_code;
+            $containerType->delete();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Container type deleted successfully',
-        ]);
+            return response()->json([
+                'success' => true,
+                'message' => "Container type {$code} deleted successfully",
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error deleting container type', [
+                'id' => $containerType->container_type_id,
+                'exception' => $e->getMessage(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to delete container type: '.$e->getMessage(),
+            ], 400);
+        }
     }
 }
