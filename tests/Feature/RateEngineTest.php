@@ -214,6 +214,9 @@ describe('FindMatchingCosts', function () {
             'vendor_id' => $vendor1->id,
             'origin_port_id' => $originPort->id,
             'destination_port_id' => $destPort->id,
+            'mode' => 'AIR',
+            'movement' => 'EXPORT',
+            'terms' => 'FOB',
             'valid_from' => now()->subDay(),
             'valid_upto' => now()->addDay(),
         ]);
@@ -222,6 +225,8 @@ describe('FindMatchingCosts', function () {
             'rate_header_id' => $header1->id,
             'charge_id' => $charge->id,
             'uom_id' => $uom->id,
+            'slab_min' => 0,
+            'slab_max' => 99,
             'cost_rate' => 100,
         ]);
 
@@ -229,6 +234,9 @@ describe('FindMatchingCosts', function () {
             'vendor_id' => $vendor2->id,
             'origin_port_id' => $originPort->id,
             'destination_port_id' => $destPort->id,
+            'mode' => 'AIR',
+            'movement' => 'EXPORT',
+            'terms' => 'FOB',
             'valid_from' => now()->subDay(),
             'valid_upto' => now()->addDay(),
         ]);
@@ -237,6 +245,8 @@ describe('FindMatchingCosts', function () {
             'rate_header_id' => $header2->id,
             'charge_id' => $charge->id,
             'uom_id' => $uom->id,
+            'slab_min' => 0,
+            'slab_max' => 99,
             'cost_rate' => 95,
         ]);
 

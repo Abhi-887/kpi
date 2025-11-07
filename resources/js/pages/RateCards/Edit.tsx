@@ -1,255 +1,413 @@
-import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Link, useForm } from '@inertiajs/react'
+import { Input } from '@/components/ui/input'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import AppLayout from '@/layouts/app-layout'
-import { Head } from '@inertiajs/react'
-import { ArrowLeft } from 'lucide-react'
+import { Head, Link, router, usePage } from '@inertiajs/react'
 import { type BreadcrumbItem } from '@/types'
+import { useState } from 'react'
+import { ChevronLeft, Plus, Trash2 } from 'lucide-react'
 
-interface RateCard {
+interface RateLine {
+  id?: number
+  charge_id: number
+  charge?: { id: number; name: string }
+  slab_min: number
+  slab_max: number
+  cost_rate: number
+  currency_code: string
+  is_fixed_rate: boolean
+  uom_id: number
+  uom?: { id: number; code: string }
+}
+
+interface VendorRateHeader {
+  id: number
+  vendor_id: number
+  origin_port_id: number
+  destination_port_id: number
+  mode: string
+  movement: string
+  terms: string
+  valid_from: string
+  valid_upto: string
+  is_active: boolean
+  lines: RateLine[]
+  vendor?: { id: number; name: string }
+  originPort?: { id: number; code: string; name: string }
+  destinationPort?: { id: number; code: string; name: string }
+}
+
+interface Supplier {
   id: number
   name: string
-  description: string
-  status: string
-  service_type: string
-  origin_country: string
-  destination_country: string
-  base_rate: string
-  minimum_charge: string
-  surcharge_percentage: string
-  is_zone_based: boolean
-  valid_days: number
 }
 
-interface EditRateCardProps {
-  rateCard: RateCard
+interface Location {
+  id: number
+  code: string
+  name: string
 }
 
-export default function EditRateCard({ rateCard }: EditRateCardProps) {
+interface Charge {
+  id: number
+  name: string
+}
+
+interface UnitOfMeasure {
+  id: number
+  code: string
+  name: string
+}
+
+export default function EditRateCard() {
+  const { rate, suppliers, locations, charges, uoms } = usePage().props as any
+  const [formData, setFormData] = useState({
+    vendor_id: String(rate.vendor_id),
+    origin_port_id: String(rate.origin_port_id),
+    destination_port_id: String(rate.destination_port_id),
+    mode: rate.mode,
+    movement: rate.movement,
+    terms: rate.terms,
+    valid_from: rate.valid_from,
+    valid_upto: rate.valid_upto,
+    is_active: rate.is_active,
+  })
+  const [lines, setLines] = useState<RateLine[]>(rate.lines || [])
+
   const breadcrumbs: BreadcrumbItem[] = [
-    {
-      title: 'Rate Cards',
-      href: '/rate-cards',
-    },
-    {
-      title: rateCard.name,
-      href: `/rate-cards/${rateCard.id}`,
-    },
-    {
-      title: 'Edit',
-      href: `/rate-cards/${rateCard.id}/edit`,
-    },
+    { title: 'Rate Management', href: '/vendor-rates' },
+    { title: `Edit - Rate Card`, href: `/vendor-rates/${rate.id}/edit` },
   ]
 
-  const { data, setData, put, processing, errors } = useForm({
-    name: rateCard.name,
-    description: rateCard.description,
-    status: rateCard.status,
-    service_type: rateCard.service_type,
-    origin_country: rateCard.origin_country,
-    destination_country: rateCard.destination_country,
-    base_rate: rateCard.base_rate,
-    minimum_charge: rateCard.minimum_charge,
-    surcharge_percentage: rateCard.surcharge_percentage,
-    is_zone_based: rateCard.is_zone_based,
-    valid_days: rateCard.valid_days.toString(),
-  })
+  const handleLineAdd = () => {
+    setLines([...lines, {
+      charge_id: 0,
+      slab_min: 0,
+      slab_max: 100,
+      cost_rate: 0,
+      currency_code: 'USD',
+      is_fixed_rate: false,
+      uom_id: 0,
+    }])
+  }
 
-  const submit = (e: React.FormEvent) => {
+  const handleLineRemove = (index: number) => {
+    setLines(lines.filter((_, i) => i !== index))
+  }
+
+  const handleLineChange = (index: number, key: string, value: any) => {
+    const newLines = [...lines]
+    newLines[index] = { ...newLines[index], [key]: value }
+    setLines(newLines)
+  }
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    put(`/rate-cards/${rateCard.id}`)
+    router.patch(`/vendor-rates/${rate.id}`, {
+      ...formData,
+      is_active: formData.is_active ? 1 : 0,
+      lines: lines.map(line => ({
+        ...line,
+        charge_id: Number(line.charge_id),
+        uom_id: Number(line.uom_id),
+        slab_min: Number(line.slab_min),
+        slab_max: Number(line.slab_max),
+        cost_rate: Number(line.cost_rate),
+      })),
+    })
   }
 
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
-      <Head title={`Edit ${rateCard.name}`} />
-      <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-        <div className="max-w-3xl">
-          <form onSubmit={submit} className="space-y-6">
-            {/* Basic Info Card */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Basic Information</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <label className="text-sm font-medium">Rate Card Name *</label>
+      <Head title="Edit Rate Card" />
+      <div className="flex h-full flex-1 flex-col gap-4 p-4">
+        <div className="flex items-center justify-between">
+          <h1 className="text-2xl font-bold">Edit Rate Card</h1>
+          <Link href="/vendor-rates">
+            <Button variant="outline">
+              <ChevronLeft className="w-4 h-4 mr-2" />
+              Back
+            </Button>
+          </Link>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Header Information */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Rate Card Header</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Vendor */}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Vendor *</label>
+                  <Select value={formData.vendor_id} onValueChange={(val) => setFormData({ ...formData, vendor_id: val })}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {suppliers.map((s: Supplier) => (
+                        <SelectItem key={s.id} value={String(s.id)}>{s.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Mode */}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Mode *</label>
+                  <Select value={formData.mode} onValueChange={(val) => setFormData({ ...formData, mode: val })}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="AIR">Air</SelectItem>
+                      <SelectItem value="SEA">Sea</SelectItem>
+                      <SelectItem value="ROAD">Road</SelectItem>
+                      <SelectItem value="RAIL">Rail</SelectItem>
+                      <SelectItem value="MULTIMODAL">Multimodal</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Movement */}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Movement *</label>
+                  <Select value={formData.movement} onValueChange={(val) => setFormData({ ...formData, movement: val })}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="IMPORT">Import</SelectItem>
+                      <SelectItem value="EXPORT">Export</SelectItem>
+                      <SelectItem value="DOMESTIC">Domestic</SelectItem>
+                      <SelectItem value="INTER_MODAL">Inter-modal</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Terms */}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Terms *</label>
+                  <Select value={formData.terms} onValueChange={(val) => setFormData({ ...formData, terms: val })}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="EXW">EXW</SelectItem>
+                      <SelectItem value="FCA">FCA</SelectItem>
+                      <SelectItem value="CPT">CPT</SelectItem>
+                      <SelectItem value="CIP">CIP</SelectItem>
+                      <SelectItem value="DAP">DAP</SelectItem>
+                      <SelectItem value="DDP">DDP</SelectItem>
+                      <SelectItem value="FOB">FOB</SelectItem>
+                      <SelectItem value="CFR">CFR</SelectItem>
+                      <SelectItem value="CIF">CIF</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Origin Port */}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Origin Port *</label>
+                  <Select value={formData.origin_port_id} onValueChange={(val) => setFormData({ ...formData, origin_port_id: val })}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {locations.map((l: Location) => (
+                        <SelectItem key={l.id} value={String(l.id)}>{l.code} - {l.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Destination Port */}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Destination Port *</label>
+                  <Select value={formData.destination_port_id} onValueChange={(val) => setFormData({ ...formData, destination_port_id: val })}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {locations.map((l: Location) => (
+                        <SelectItem key={l.id} value={String(l.id)}>{l.code} - {l.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Valid From */}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Valid From *</label>
                   <Input
-                    value={data.name}
-                    onChange={(e) => setData('name', e.target.value)}
-                    placeholder="e.g., India to USA - Express"
-                    className="mt-1"
-                  />
-                  {errors.name && <p className="text-red-600 text-sm mt-1">{errors.name}</p>}
-                </div>
-
-                <div>
-                  <label className="text-sm font-medium">Description</label>
-                  <textarea
-                    value={data.description}
-                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setData('description', e.target.value)}
-                    placeholder="Additional details about this rate card"
-                    className="mt-1 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 w-full"
-                    rows={3}
+                    type="date"
+                    value={formData.valid_from}
+                    onChange={(e) => setFormData({ ...formData, valid_from: e.target.value })}
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-sm font-medium">Status *</label>
-                    <Select value={data.status} onValueChange={(value) => setData('status', value as any)}>
-                      <SelectTrigger className="mt-1">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="active">Active</SelectItem>
-                        <SelectItem value="inactive">Inactive</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div>
-                    <label className="text-sm font-medium">Service Type *</label>
-                    <Select value={data.service_type} onValueChange={(value) => setData('service_type', value as any)}>
-                      <SelectTrigger className="mt-1">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="standard">Standard</SelectItem>
-                        <SelectItem value="express">Express</SelectItem>
-                        <SelectItem value="overnight">Overnight</SelectItem>
-                        <SelectItem value="economy">Economy</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Route Info Card */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Route Information</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-sm font-medium">Origin Country *</label>
-                    <Input
-                      value={data.origin_country}
-                      onChange={(e) => setData('origin_country', e.target.value)}
-                      placeholder="e.g., India"
-                      className="mt-1"
-                    />
-                    {errors.origin_country && <p className="text-red-600 text-sm mt-1">{errors.origin_country}</p>}
-                  </div>
-
-                  <div>
-                    <label className="text-sm font-medium">Destination Country *</label>
-                    <Input
-                      value={data.destination_country}
-                      onChange={(e) => setData('destination_country', e.target.value)}
-                      placeholder="e.g., USA"
-                      className="mt-1"
-                    />
-                    {errors.destination_country && <p className="text-red-600 text-sm mt-1">{errors.destination_country}</p>}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Pricing Card */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Pricing Information</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-sm font-medium">Base Rate (per kg) *</label>
-                    <Input
-                      type="number"
-                      step="0.01"
-                      value={data.base_rate}
-                      onChange={(e) => setData('base_rate', e.target.value)}
-                      placeholder="0.00"
-                      className="mt-1"
-                    />
-                    {errors.base_rate && <p className="text-red-600 text-sm mt-1">{errors.base_rate}</p>}
-                  </div>
-
-                  <div>
-                    <label className="text-sm font-medium">Minimum Charge *</label>
-                    <Input
-                      type="number"
-                      step="0.01"
-                      value={data.minimum_charge}
-                      onChange={(e) => setData('minimum_charge', e.target.value)}
-                      placeholder="0.00"
-                      className="mt-1"
-                    />
-                    {errors.minimum_charge && <p className="text-red-600 text-sm mt-1">{errors.minimum_charge}</p>}
-                  </div>
+                {/* Valid Upto */}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Valid Upto *</label>
+                  <Input
+                    type="date"
+                    value={formData.valid_upto}
+                    onChange={(e) => setFormData({ ...formData, valid_upto: e.target.value })}
+                  />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-sm font-medium">Surcharge Percentage (%) *</label>
-                    <Input
-                      type="number"
-                      step="0.01"
-                      value={data.surcharge_percentage}
-                      onChange={(e) => setData('surcharge_percentage', e.target.value)}
-                      placeholder="0.00"
-                      className="mt-1"
-                    />
-                    {errors.surcharge_percentage && <p className="text-red-600 text-sm mt-1">{errors.surcharge_percentage}</p>}
-                  </div>
-
-                  <div>
-                    <label className="text-sm font-medium">Valid Days *</label>
-                    <Input
-                      type="number"
-                      value={data.valid_days}
-                      onChange={(e) => setData('valid_days', e.target.value)}
-                      placeholder="365"
-                      className="mt-1"
-                    />
-                    {errors.valid_days && <p className="text-red-600 text-sm mt-1">{errors.valid_days}</p>}
-                  </div>
-                </div>
-
+                {/* Active Status */}
                 <div className="flex items-center gap-2">
                   <input
                     type="checkbox"
-                    id="zone_based"
-                    checked={data.is_zone_based}
-                    onChange={(e) => setData('is_zone_based', e.target.checked)}
-                    className="rounded"
+                    id="is_active"
+                    checked={formData.is_active}
+                    onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
+                    className="w-4 h-4 rounded"
                   />
-                  <label htmlFor="zone_based" className="text-sm font-medium">
-                    Zone Based Pricing
-                  </label>
+                  <label htmlFor="is_active" className="text-sm font-medium">Active</label>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </CardContent>
+          </Card>
 
-            {/* Actions */}
-            <div className="flex gap-2">
-              <Link href={`/rate-cards/${rateCard.id}`}>
-                <Button variant="outline">
-                  <ArrowLeft className="w-4 h-4 mr-2" />
-                  Cancel
-                </Button>
-              </Link>
-              <Button type="submit" disabled={processing}>
-                {processing ? 'Updating...' : 'Update Rate Card'}
+          {/* Rate Lines */}
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <CardTitle>Rate Lines</CardTitle>
+              <Button type="button" onClick={handleLineAdd} size="sm" variant="outline">
+                <Plus className="w-4 h-4 mr-2" />
+                Add Line
               </Button>
-            </div>
-          </form>
-        </div>
+            </CardHeader>
+            <CardContent>
+              {lines.length === 0 ? (
+                <p className="text-sm text-gray-500 text-center py-4">No rate lines. Click "Add Line" to start.</p>
+              ) : (
+                <div className="space-y-3 overflow-x-auto">
+                  <div className="min-w-full inline-block">
+                    <table className="w-full text-sm">
+                      <thead className="border-b bg-gray-50 dark:bg-gray-900/50">
+                        <tr>
+                          <th className="px-3 py-2 text-left font-medium">Charge</th>
+                          <th className="px-3 py-2 text-left font-medium">UOM</th>
+                          <th className="px-3 py-2 text-left font-medium">Slab Min</th>
+                          <th className="px-3 py-2 text-left font-medium">Slab Max</th>
+                          <th className="px-3 py-2 text-left font-medium">Cost Rate</th>
+                          <th className="px-3 py-2 text-left font-medium">Currency</th>
+                          <th className="px-3 py-2 text-left font-medium">Fixed</th>
+                          <th className="px-3 py-2 text-center font-medium">Action</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y">
+                        {lines.map((line, idx) => (
+                          <tr key={idx}>
+                            <td className="px-3 py-2">
+                              <select
+                                value={line.charge_id}
+                                onChange={(e) => handleLineChange(idx, 'charge_id', e.target.value)}
+                                className="w-full px-2 py-1 border rounded text-sm"
+                              >
+                                <option value="">Select Charge</option>
+                                {charges.map((c: Charge) => (
+                                  <option key={c.id} value={c.id}>{c.name}</option>
+                                ))}
+                              </select>
+                            </td>
+                            <td className="px-3 py-2">
+                              <select
+                                value={line.uom_id}
+                                onChange={(e) => handleLineChange(idx, 'uom_id', e.target.value)}
+                                className="w-full px-2 py-1 border rounded text-sm"
+                              >
+                                <option value="">Select UOM</option>
+                                {uoms.map((u: UnitOfMeasure) => (
+                                  <option key={u.id} value={u.id}>{u.code}</option>
+                                ))}
+                              </select>
+                            </td>
+                            <td className="px-3 py-2">
+                              <input
+                                type="number"
+                                value={line.slab_min}
+                                onChange={(e) => handleLineChange(idx, 'slab_min', e.target.value)}
+                                className="w-full px-2 py-1 border rounded text-sm"
+                                step="0.01"
+                              />
+                            </td>
+                            <td className="px-3 py-2">
+                              <input
+                                type="number"
+                                value={line.slab_max}
+                                onChange={(e) => handleLineChange(idx, 'slab_max', e.target.value)}
+                                className="w-full px-2 py-1 border rounded text-sm"
+                                step="0.01"
+                              />
+                            </td>
+                            <td className="px-3 py-2">
+                              <input
+                                type="number"
+                                value={line.cost_rate}
+                                onChange={(e) => handleLineChange(idx, 'cost_rate', e.target.value)}
+                                className="w-full px-2 py-1 border rounded text-sm"
+                                step="0.01"
+                              />
+                            </td>
+                            <td className="px-3 py-2">
+                              <select
+                                value={line.currency_code}
+                                onChange={(e) => handleLineChange(idx, 'currency_code', e.target.value)}
+                                className="w-full px-2 py-1 border rounded text-sm"
+                              >
+                                <option value="USD">USD</option>
+                                <option value="EUR">EUR</option>
+                                <option value="GBP">GBP</option>
+                                <option value="INR">INR</option>
+                                <option value="AUD">AUD</option>
+                              </select>
+                            </td>
+                            <td className="px-3 py-2 text-center">
+                              <input
+                                type="checkbox"
+                                checked={line.is_fixed_rate}
+                                onChange={(e) => handleLineChange(idx, 'is_fixed_rate', e.target.checked)}
+                                className="w-4 h-4"
+                              />
+                            </td>
+                            <td className="px-3 py-2 text-center">
+                              <button
+                                type="button"
+                                onClick={() => handleLineRemove(idx)}
+                                className="text-red-600 hover:text-red-800"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Buttons */}
+          <div className="flex gap-2">
+            <Button type="submit" variant="default">
+              Update Rate Card
+            </Button>
+            <Link href="/vendor-rates">
+              <Button type="button" variant="outline">
+                Cancel
+              </Button>
+            </Link>
+          </div>
+        </form>
       </div>
     </AppLayout>
   )

@@ -1,235 +1,237 @@
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Link } from '@inertiajs/react'
+import { Link, router, usePage } from '@inertiajs/react'
 import AppLayout from '@/layouts/app-layout'
 import { Head } from '@inertiajs/react'
-import { ArrowLeft, Edit, Trash2 } from 'lucide-react'
+import { ChevronLeft, Edit2, Trash2 } from 'lucide-react'
 import { type BreadcrumbItem } from '@/types'
-import { router } from '@inertiajs/react'
 import { useState } from 'react'
 
-interface PricingCharge {
+interface RateLine {
   id: number
-  name: string
-  charge_type: string
-  amount: string
-  description: string
-  is_optional: boolean
-  apply_order: number
-  status: string
+  charge_id: number
+  charge?: { id: number; name: string }
+  slab_min: number
+  slab_max: number
+  cost_rate: number
+  currency_code: string
+  is_fixed_rate: boolean
+  uom_id: number
+  uom?: { id: number; code: string }
 }
 
-interface RateCard {
+interface VendorRateHeader {
   id: number
-  name: string
-  description: string
-  status: string
-  service_type: string
-  origin_country: string
-  destination_country: string
-  base_rate: string
-  minimum_charge: string
-  surcharge_percentage: string
-  is_zone_based: boolean
-  valid_days: number
-  charges: PricingCharge[]
+  vendor_id: number
+  origin_port_id: number
+  destination_port_id: number
+  mode: string
+  movement: string
+  terms: string
+  valid_from: string
+  valid_upto: string
+  is_active: boolean
+  lines: RateLine[]
+  vendor?: { id: number; name: string }
+  originPort?: { id: number; code: string; name: string; city: string }
+  destinationPort?: { id: number; code: string; name: string; city: string }
 }
 
-interface ShowRateCardProps {
-  rateCard: RateCard
+const modeColors: Record<string, string> = {
+  AIR: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-200',
+  SEA: 'bg-cyan-100 text-cyan-800 dark:bg-cyan-900/30 dark:text-cyan-200',
+  ROAD: 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-200',
+  RAIL: 'bg-slate-100 text-slate-800 dark:bg-slate-900/30 dark:text-slate-200',
+  MULTIMODAL: 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-200',
 }
 
-export default function ShowRateCard({ rateCard }: ShowRateCardProps) {
-  const [isDeleting, setIsDeleting] = useState(false)
+const movementColors: Record<string, string> = {
+  IMPORT: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-200',
+  EXPORT: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-200',
+  DOMESTIC: 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-200',
+  INTER_MODAL: 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-200',
+}
+
+export default function ShowRateCard() {
+  const { rate, lines } = usePage().props as any
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
 
   const breadcrumbs: BreadcrumbItem[] = [
-    {
-      title: 'Rate Cards',
-      href: '/rate-cards',
-    },
-    {
-      title: rateCard.name,
-      href: `/rate-cards/${rateCard.id}`,
-    },
+    { title: 'Rate Management', href: '/vendor-rates' },
+    { title: `${rate.vendor_name}`, href: `/vendor-rates/${rate.id}` },
   ]
 
-  const statusColors: Record<string, string> = {
-    active: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
-    inactive: 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400',
-  }
-
-  const serviceTypeColors: Record<string, string> = {
-    standard: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400',
-    express: 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400',
-    overnight: 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400',
-    economy: 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400',
-  }
-
-  const chargeTypeColors: Record<string, string> = {
-    fixed: 'bg-slate-100 text-slate-800 dark:bg-slate-900/30 dark:text-slate-400',
-    percentage: 'bg-cyan-100 text-cyan-800 dark:bg-cyan-900/30 dark:text-cyan-400',
-    weight_based: 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-400',
-  }
-
   const handleDelete = () => {
-    if (confirm('Are you sure you want to delete this rate card? This action cannot be undone.')) {
-      setIsDeleting(true)
-      router.delete(`/rate-cards/${rateCard.id}`)
-    }
+    router.delete(`/vendor-rates/${rate.id}`)
   }
+
+  const isValidNow = new Date() >= new Date(rate.valid_from) && new Date() <= new Date(rate.valid_upto)
 
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
-      <Head title={rateCard.name} />
-      <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-        <div className="max-w-4xl">
-          {/* Header with Actions */}
-          <div className="mb-6 flex items-start justify-between gap-4">
-            <div>
-              <h1 className="text-3xl font-bold mb-2">{rateCard.name}</h1>
-              {rateCard.description && <p className="text-muted-foreground">{rateCard.description}</p>}
-            </div>
-            <div className="flex gap-2">
-              <Link href={`/rate-cards/${rateCard.id}/edit`}>
-                <Button variant="default" size="sm">
-                  <Edit className="w-4 h-4 mr-2" />
-                  Edit
-                </Button>
-              </Link>
-              <Button variant="destructive" size="sm" onClick={handleDelete} disabled={isDeleting}>
-                <Trash2 className="w-4 h-4 mr-2" />
-                {isDeleting ? 'Deleting...' : 'Delete'}
-              </Button>
-              <Link href="/rate-cards">
-                <Button variant="outline" size="sm">
-                  <ArrowLeft className="w-4 h-4 mr-2" />
-                  Back
-                </Button>
-              </Link>
-            </div>
+      <Head title={`Rate Card - ${rate.vendor_name}`} />
+      <div className="flex h-full flex-1 flex-col gap-4 p-4">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold">{rate.vendor_name} - Rate Card</h1>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+              {rate.origin_port} → {rate.destination_port} | {rate.mode} | {rate.movement}
+            </p>
           </div>
+          <div className="flex gap-2">
+            <Link href={`/rate-cards/${rateHeader.id}/edit`}>
+              <Button variant="default">
+                <Edit2 className="w-4 h-4 mr-2" />
+                Edit
+              </Button>
+            </Link>
+            <Link href="/rate-cards">
+              <Button variant="outline">
+                <ChevronLeft className="w-4 h-4 mr-2" />
+                Back
+              </Button>
+            </Link>
+          </div>
+        </div>
 
-          {/* Basic Info Card */}
-          <Card className="mb-6">
-            <CardHeader>
-              <CardTitle>Basic Information</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 gap-6 md:grid-cols-3">
-                <div>
-                  <p className="text-sm text-muted-foreground mb-1">Status</p>
-                  <Badge className={statusColors[rateCard.status]}>{rateCard.status}</Badge>
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground mb-1">Service Type</p>
-                  <Badge className={serviceTypeColors[rateCard.service_type]}>{rateCard.service_type}</Badge>
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground mb-1">Valid Days</p>
-                  <p className="font-semibold">{rateCard.valid_days} days</p>
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground mb-1">Zone Based Pricing</p>
-                  <p className="font-semibold">{rateCard.is_zone_based ? 'Yes' : 'No'}</p>
+        {/* Header Details */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Rate Card Details</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Vendor</p>
+                <p className="font-semibold">{rateHeader.vendor?.name}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Mode</p>
+                <Badge className={modeColors[rateHeader.mode]}>{rateHeader.mode}</Badge>
+              </div>
+              <div>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Movement</p>
+                <Badge className={movementColors[rateHeader.movement]}>{rateHeader.movement}</Badge>
+              </div>
+              <div>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Terms</p>
+                <p className="font-semibold">{rateHeader.terms}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Origin</p>
+                <p className="font-semibold">{rateHeader.originPort?.code}</p>
+                <p className="text-xs text-gray-500">{rateHeader.originPort?.name}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Destination</p>
+                <p className="font-semibold">{rateHeader.destinationPort?.code}</p>
+                <p className="text-xs text-gray-500">{rateHeader.destinationPort?.name}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Valid From</p>
+                <p className="font-semibold">{new Date(rateHeader.valid_from).toLocaleDateString()}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Valid Until</p>
+                <p className="font-semibold">{new Date(rateHeader.valid_upto).toLocaleDateString()}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Status</p>
+                <div className="flex gap-2 mt-1">
+                  <Badge variant={rateHeader.is_active ? 'default' : 'secondary'}>
+                    {rateHeader.is_active ? 'Active' : 'Inactive'}
+                  </Badge>
+                  {isValidNow && <Badge className="bg-green-100 text-green-800 dark:bg-green-900/30">Currently Valid</Badge>}
                 </div>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </CardContent>
+        </Card>
 
-          {/* Route Info Card */}
-          <Card className="mb-6">
-            <CardHeader>
-              <CardTitle>Route Information</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 gap-6">
-                <div>
-                  <p className="text-sm text-muted-foreground mb-1">Origin</p>
-                  <p className="font-semibold text-lg">{rateCard.origin_country}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground mb-1">Destination</p>
-                  <p className="font-semibold text-lg">{rateCard.destination_country}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Pricing Info Card */}
-          <Card className="mb-6">
-            <CardHeader>
-              <CardTitle>Pricing Information</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 gap-6 md:grid-cols-3">
-                <div>
-                  <p className="text-sm text-muted-foreground mb-1">Base Rate (per kg)</p>
-                  <p className="font-semibold text-lg">₹{parseFloat(String(rateCard.base_rate)).toFixed(2)}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground mb-1">Minimum Charge</p>
-                  <p className="font-semibold text-lg">₹{parseFloat(String(rateCard.minimum_charge)).toFixed(2)}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground mb-1">Surcharge</p>
-                  <p className="font-semibold text-lg">{parseFloat(String(rateCard.surcharge_percentage)).toFixed(2)}%</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Pricing Charges Card */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Pricing Charges ({rateCard.charges.length})</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {rateCard.charges.length > 0 ? (
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead>
-                      <tr className="border-b">
-                        <th className="text-left py-3 px-4 font-semibold">Name</th>
-                        <th className="text-left py-3 px-4 font-semibold">Type</th>
-                        <th className="text-left py-3 px-4 font-semibold">Amount</th>
-                        <th className="text-left py-3 px-4 font-semibold">Status</th>
-                        <th className="text-left py-3 px-4 font-semibold">Optional</th>
+        {/* Rate Lines */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Rate Lines ({rateHeader.lines.length})</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {rateHeader.lines.length === 0 ? (
+              <p className="text-sm text-gray-500 text-center py-4">No rate lines defined.</p>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead className="border-b bg-gray-50 dark:bg-gray-900/50">
+                    <tr>
+                      <th className="px-4 py-3 text-left font-semibold">Charge</th>
+                      <th className="px-4 py-3 text-left font-semibold">UOM</th>
+                      <th className="px-4 py-3 text-left font-semibold">Slab Min</th>
+                      <th className="px-4 py-3 text-left font-semibold">Slab Max</th>
+                      <th className="px-4 py-3 text-left font-semibold">Cost Rate</th>
+                      <th className="px-4 py-3 text-left font-semibold">Currency</th>
+                      <th className="px-4 py-3 text-left font-semibold">Type</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y">
+                    {rateHeader.lines.map((line) => (
+                      <tr key={line.id} className="hover:bg-gray-50 dark:hover:bg-gray-900/50">
+                        <td className="px-4 py-3 font-medium">{line.charge?.name || 'N/A'}</td>
+                        <td className="px-4 py-3">{line.uom?.code || 'N/A'}</td>
+                        <td className="px-4 py-3">{line.slab_min}</td>
+                        <td className="px-4 py-3">{line.slab_max}</td>
+                        <td className="px-4 py-3 font-semibold">{line.cost_rate}</td>
+                        <td className="px-4 py-3">
+                          <Badge variant="outline">{line.currency_code}</Badge>
+                        </td>
+                        <td className="px-4 py-3">
+                          <Badge variant={line.is_fixed_rate ? 'default' : 'secondary'}>
+                            {line.is_fixed_rate ? 'Fixed' : 'Variable'}
+                          </Badge>
+                        </td>
                       </tr>
-                    </thead>
-                    <tbody>
-                      {rateCard.charges.map((charge, idx) => (
-                        <tr key={charge.id} className={idx % 2 === 0 ? 'bg-muted/50 dark:bg-gray-900/30' : ''}>
-                          <td className="py-3 px-4">
-                            <div>
-                              <p className="font-medium">{charge.name}</p>
-                              {charge.description && <p className="text-sm text-muted-foreground">{charge.description}</p>}
-                            </div>
-                          </td>
-                          <td className="py-3 px-4">
-                            <Badge className={chargeTypeColors[charge.charge_type]}>{charge.charge_type}</Badge>
-                          </td>
-                          <td className="py-3 px-4 font-semibold">
-                            {charge.charge_type === 'percentage'
-                              ? `${parseFloat(String(charge.amount)).toFixed(2)}%`
-                              : `₹${parseFloat(String(charge.amount)).toFixed(2)}`}
-                          </td>
-                          <td className="py-3 px-4">
-                            <Badge className={charge.status === 'active' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' : 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400'}>
-                              {charge.status}
-                            </Badge>
-                          </td>
-                          <td className="py-3 px-4">{charge.is_optional ? 'Yes' : 'No'}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              ) : (
-                <p className="text-muted-foreground text-center py-8">No pricing charges defined for this rate card.</p>
-              )}
-            </CardContent>
-          </Card>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Actions */}
+        <div className="flex gap-2">
+          {!showDeleteConfirm ? (
+            <>
+              <Link href={`/rate-cards/${rateHeader.id}/edit`}>
+                <Button variant="default">
+                  <Edit2 className="w-4 h-4 mr-2" />
+                  Edit Rate Card
+                </Button>
+              </Link>
+              <Button
+                variant="destructive"
+                onClick={() => setShowDeleteConfirm(true)}
+              >
+                <Trash2 className="w-4 h-4 mr-2" />
+                Delete
+              </Button>
+            </>
+          ) : (
+            <>
+              <p className="text-sm text-red-600 dark:text-red-400 py-2">Are you sure? This action cannot be undone.</p>
+              <Button
+                variant="destructive"
+                onClick={handleDelete}
+              >
+                Confirm Delete
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => setShowDeleteConfirm(false)}
+              >
+                Cancel
+              </Button>
+            </>
+          )}
         </div>
       </div>
     </AppLayout>
