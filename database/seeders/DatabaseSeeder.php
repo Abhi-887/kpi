@@ -29,6 +29,14 @@ class DatabaseSeeder extends Seeder
         // Assign Admin role to test user
         $user->assignRole('admin');
 
+        // Seed master data (Phase 1)
+        $this->call(UnitOfMeasureSeeder::class);
+        $this->call(TaxCodeSeeder::class);
+        $this->call(ItemSeeder::class);
+        $this->call(SupplierSeeder::class);
+        $this->call(CostComponentSeeder::class);
+        $this->call(PriceListSeeder::class);
+
         // Seed shipments
         $this->call(ShipmentSeeder::class);
 
