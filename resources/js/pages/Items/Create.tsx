@@ -46,7 +46,7 @@ export default function ItemCreate() {
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
       <Head title="Create Item" />
-      <div className="space-y-6">
+      <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
         <div className="flex items-center gap-4">
           <Link href="/items">
             <Button variant="outline"><ArrowLeft className="w-4 h-4 mr-2" />Back</Button>

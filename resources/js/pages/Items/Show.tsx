@@ -39,8 +39,8 @@ export default function ItemShow() {
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
       <Head title={`Item - ${item.name}`} />
-      <div className="space-y-6">
-        <div className="flex justify-between items-center">
+      <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
+        <div className="mb-2 flex items-center justify-between">
           <Link href="/items">
             <Button variant="outline"><ArrowLeft className="w-4 h-4 mr-2" />Back</Button>
           </Link>
