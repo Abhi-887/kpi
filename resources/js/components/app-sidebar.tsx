@@ -31,6 +31,7 @@ const navGroups: NavGroup[] = [
             { title: 'Items', href: '/items', icon: Database },
             { title: 'Unit of Measures', href: '/unit-of-measures', icon: Layers },
             { title: 'Tax Codes', href: '/tax-codes', icon: Receipt },
+            { title: 'Container Types', href: '/container-types', icon: Layers },
             { title: 'Suppliers', href: '/suppliers', icon: Users },
             { title: 'Customers', href: '/customers', icon: Users },
         ],
