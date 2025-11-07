@@ -11,31 +11,31 @@ import { useState } from 'react'
 interface RateLine {
   id: number
   charge_id: number
-  charge?: { id: number; name: string }
+  charge_code: string
+  charge_name: string
   slab_min: number
   slab_max: number
   cost_rate: number
   currency_code: string
   is_fixed_rate: boolean
   uom_id: number
-  uom?: { id: number; code: string }
+  uom_symbol: string
 }
 
-interface VendorRateHeader {
+interface RateCard {
   id: number
   vendor_id: number
-  origin_port_id: number
-  destination_port_id: number
+  vendor_name: string
   mode: string
   movement: string
   terms: string
+  origin_port: string
+  destination_port: string
   valid_from: string
   valid_upto: string
   is_active: boolean
-  lines: RateLine[]
-  vendor?: { id: number; name: string }
-  originPort?: { id: number; code: string; name: string; city: string }
-  destinationPort?: { id: number; code: string; name: string; city: string }
+  notes?: string
+  created_at: string
 }
 
 const modeColors: Record<string, string> = {
