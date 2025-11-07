@@ -13,7 +13,7 @@ import {
 import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid, Package, DollarSign, FileText, Users, ShoppingCart, Receipt, Bell, Zap, Settings, History, TrendingUp, Layers, Database, Tag } from 'lucide-react';
+import { BookOpen, Folder, LayoutGrid, Package, DollarSign, FileText, Users, ShoppingCart, Receipt, Bell, Zap, Settings, History, TrendingUp, Layers, Database, Tag, MapPin } from 'lucide-react';
 import AppLogo from './app-logo';
 import React, { useEffect, useRef } from 'react';
 import { type NavGroup } from '@/types';
@@ -33,6 +33,7 @@ const navGroups: NavGroup[] = [
             { title: 'Tax Codes', href: '/tax-codes', icon: Receipt },
             { title: 'Charges', href: '/charges', icon: Tag },
             { title: 'Container Types', href: '/container-types', icon: Layers },
+            { title: 'Ports', href: '/ports', icon: MapPin },
             { title: 'Suppliers', href: '/suppliers', icon: Users },
             { title: 'Customers', href: '/customers', icon: Users },
         ],
@@ -41,7 +42,7 @@ const navGroups: NavGroup[] = [
         title: 'Pricing',
         items: [
             { title: 'Price Lists', href: '/price-lists', icon: Tag },
-            { title: 'Rate Cards', href: '/rate-cards', icon: DollarSign },
+            { title: 'Rate Cards', href: '/vendor-rates', icon: DollarSign },
             {
                 title: 'Pricing Tables',
                 href: '/pricing',
