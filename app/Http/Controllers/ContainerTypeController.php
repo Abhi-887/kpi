@@ -19,6 +19,7 @@ class ContainerTypeController extends Controller
 
         return Inertia::render('ContainerTypes/Index', [
             'containerTypes' => $containerTypes,
+            'csrf_token' => csrf_token(),
         ]);
     }
 

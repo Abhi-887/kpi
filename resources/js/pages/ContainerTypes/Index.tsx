@@ -11,6 +11,8 @@ import { Plus, Pencil, Trash2 } from 'lucide-react'
 import { type BreadcrumbItem } from '@/types'
 import { BaseDialog } from '@/components/dialogs/base-dialog'
 import { ConfirmDialog } from '@/components/dialogs/confirm-dialog'
+import { useAlert } from '@/hooks/use-alert'
+import { AlertContainer } from '@/components/alert-container'
 
 interface ContainerType {
   id: number
@@ -23,6 +25,7 @@ const CONTAINER_CODES = ['20GP', '20OT', '20RF', '40GP', '40HC', '40HQ', '40RF',
 
 export default function ContainerTypesIndex() {
   const { containerTypes = [], csrf_token } = usePage().props as any
+  const { alerts, dismissAlert, success, error: showError } = useAlert()
   const [isCreateOpen, setIsCreateOpen] = useState(false)
   const [isEditOpen, setIsEditOpen] = useState(false)
   const [isDeleteOpen, setIsDeleteOpen] = useState(false)
@@ -80,18 +83,26 @@ export default function ContainerTypesIndex() {
         body: JSON.stringify(formData),
       })
 
+      const data = await response.json()
+
       if (!response.ok) {
-        const data = await response.json()
         if (data.errors) {
           setErrors(data.errors)
+          showError('Validation Failed', 'Please check the form for errors')
+          return
+        }
+        if (data.message) {
+          showError('Error', data.message)
         }
         return
       }
 
       setIsCreateOpen(false)
+      success(`Container type ${formData.container_code} created successfully`)
       router.reload()
     } catch (error) {
       console.error('Error:', error)
+      showError('Failed to create container type', 'An unexpected error occurred')
     } finally {
       setIsLoading(false)
     }
@@ -114,18 +125,26 @@ export default function ContainerTypesIndex() {
         body: JSON.stringify(formData),
       })
 
+      const data = await response.json()
+
       if (!response.ok) {
-        const data = await response.json()
         if (data.errors) {
           setErrors(data.errors)
+          showError('Validation Failed', 'Please check the form for errors')
+          return
+        }
+        if (data.message) {
+          showError('Error', data.message)
         }
         return
       }
 
       setIsEditOpen(false)
+      success(`Container type ${formData.container_code} updated successfully`)
       router.reload()
     } catch (error) {
       console.error('Error:', error)
+      showError('Failed to update container type', 'An unexpected error occurred')
     } finally {
       setIsLoading(false)
     }
@@ -146,13 +165,16 @@ export default function ContainerTypesIndex() {
       })
 
       if (!response.ok) {
+        showError('Failed to delete', 'An error occurred while deleting')
         return
       }
 
       setIsDeleteOpen(false)
+      success(`Container type ${selectedContainerType.container_code} deleted successfully`)
       router.reload()
     } catch (error) {
       console.error('Error:', error)
+      showError('Failed to delete container type', 'An unexpected error occurred')
     } finally {
       setIsLoading(false)
     }
@@ -161,6 +183,7 @@ export default function ContainerTypesIndex() {
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
       <Head title="Container Types Master" />
+      <AlertContainer alerts={alerts} onDismiss={dismissAlert} />
       <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
         <div className="flex justify-between items-center">
           <h1 className="text-3xl font-bold">Container Types Master</h1>
@@ -222,7 +245,12 @@ export default function ContainerTypesIndex() {
       </div>
 
       {/* Create Modal */}
-      <BaseDialog open={isCreateOpen} onOpenChange={setIsCreateOpen} title="Add Container Type">
+      <BaseDialog
+        open={isCreateOpen}
+        onOpenChange={setIsCreateOpen}
+        title="Add Container Type"
+        description="Create a new container type for SEA freight operations"
+      >
         <div className="space-y-4">
           <div>
             <Label htmlFor="create-code">Container Code *</Label>
@@ -266,7 +294,12 @@ export default function ContainerTypesIndex() {
       </BaseDialog>
 
       {/* Edit Modal */}
-      <BaseDialog open={isEditOpen} onOpenChange={setIsEditOpen} title="Edit Container Type">
+      <BaseDialog
+        open={isEditOpen}
+        onOpenChange={setIsEditOpen}
+        title="Edit Container Type"
+        description="Update the container type details"
+      >
         <div className="space-y-4">
           <div>
             <Label htmlFor="edit-code">Container Code *</Label>
