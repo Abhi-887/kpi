@@ -44,6 +44,8 @@ const navGroups: NavGroup[] = [
             { title: 'Price Lists', href: '/price-lists', icon: Tag },
             { title: 'Rate Cards', href: '/vendor-rates', icon: DollarSign },
             { title: 'Exchange Rates', href: '/exchange-rates', icon: TrendingUp },
+            { title: 'Charge Applicability', href: '/charge-applicability', icon: Zap },
+            { title: 'Margin Engine', href: '/margin-engine', icon: TrendingUp },
             {
                 title: 'Pricing Tables',
                 href: '/pricing',

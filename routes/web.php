@@ -2,7 +2,9 @@
 
 use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\ChargeController;
+use App\Http\Controllers\ChargeRuleController;
 use App\Http\Controllers\ContainerTypeController;
+use App\Http\Controllers\MarginRuleController;
 use App\Http\Controllers\CostComponentController;
 use App\Http\Controllers\CourierPriceController;
 use App\Http\Controllers\CustomerController;
@@ -50,8 +52,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('cost-components', CostComponentController::class);
     Route::resource('price-lists', PriceListController::class);
 
-    // Exchange Rates Management
-    Route::prefix('exchange-rates')->group(function () {
+    // Exchange Rates Management (admin only)
+    Route::middleware('role:admin')->prefix('exchange-rates')->group(function () {
         Route::get('', [ExchangeRateController::class, 'index'])->name('exchange-rates.index');
         Route::get('create', [ExchangeRateController::class, 'create'])->name('exchange-rates.create');
         Route::post('', [ExchangeRateController::class, 'store'])->name('exchange-rates.store');
@@ -88,6 +90,34 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('rates-for-charge', [VendorRateController::class, 'ratesForCharge'])->name('vendor-rates.charge-rates');
         Route::post('{vendorRate}/validate', [VendorRateController::class, 'validateRate'])->name('vendor-rates.validate');
         Route::post('{vendorRate}/calculate-cost', [VendorRateController::class, 'calculateVendorCost'])->name('vendor-rates.calculate-cost');
+    });
+
+    // Charge Applicability Engine (Charge Rules Management)
+    Route::prefix('charge-applicability')->group(function () {
+        Route::get('', [ChargeRuleController::class, 'index'])->name('charge-applicability.index');
+
+        // API endpoints for Charge Engine
+        Route::post('get-rules', [ChargeRuleController::class, 'getRulesForCombination'])->name('charge-applicability.get-rules');
+        Route::post('add-charge', [ChargeRuleController::class, 'addChargeToRules'])->name('charge-applicability.add-charge');
+        Route::post('remove-charge', [ChargeRuleController::class, 'removeChargeFromRules'])->name('charge-applicability.remove-charge');
+        Route::post('applicable-charges', [ChargeRuleController::class, 'getApplicableCharges'])->name('charge-applicability.applicable-charges');
+        Route::post('applicable-charge-ids', [ChargeRuleController::class, 'getApplicableChargeIds'])->name('charge-applicability.applicable-charge-ids');
+        Route::post('validate-rules', [ChargeRuleController::class, 'validateRules'])->name('charge-applicability.validate-rules');
+    });
+
+    // Margin Engine (Margin Rules Management)
+    Route::prefix('margin-engine')->group(function () {
+        Route::get('', [MarginRuleController::class, 'index'])->name('margin-engine.index');
+
+        // API endpoints for Margin Engine
+        Route::post('get-rules', [MarginRuleController::class, 'getRulesForCombination'])->name('margin-engine.get-rules');
+        Route::post('calculate-price', [MarginRuleController::class, 'calculateSalePrice'])->name('margin-engine.calculate-price');
+        Route::post('add-rule', [MarginRuleController::class, 'addMarginRule'])->name('margin-engine.add-rule');
+        Route::patch('{marginRule}', [MarginRuleController::class, 'updateMarginRule'])->name('margin-engine.update-rule');
+        Route::post('remove-rule', [MarginRuleController::class, 'removeMarginRule'])->name('margin-engine.remove-rule');
+        Route::get('list-rules', [MarginRuleController::class, 'listAllRules'])->name('margin-engine.list-rules');
+        Route::post('validate-rules', [MarginRuleController::class, 'validateRules'])->name('margin-engine.validate-rules');
+        Route::post('calculate-bulk', [MarginRuleController::class, 'calculateBulkPrices'])->name('margin-engine.calculate-bulk');
     });
 
     // Quotes routes

@@ -33,6 +33,7 @@ class DatabaseSeeder extends Seeder
         $this->call(UnitOfMeasureSeeder::class);
         $this->call(TaxCodeSeeder::class);
         $this->call(ChargeSeeder::class);
+        $this->call(ChargeRuleSeeder::class);
         $this->call(ItemSeeder::class);
         $this->call(SupplierSeeder::class);
         $this->call(CostComponentSeeder::class);
@@ -44,5 +45,8 @@ class DatabaseSeeder extends Seeder
         // Seed customers and orders
         $this->call(CustomerSeeder::class);
         $this->call(OrderSeeder::class);
+
+        // Seed margin rules (Margin Engine)
+        $this->call(MarginRuleSeeder::class);
     }
 }
