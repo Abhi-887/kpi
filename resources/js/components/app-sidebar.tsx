@@ -43,6 +43,7 @@ const navGroups: NavGroup[] = [
         items: [
             { title: 'Price Lists', href: '/price-lists', icon: Tag },
             { title: 'Rate Cards', href: '/vendor-rates', icon: DollarSign },
+            { title: 'Exchange Rates', href: '/exchange-rates', icon: TrendingUp },
             {
                 title: 'Pricing Tables',
                 href: '/pricing',
