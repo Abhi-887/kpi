@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Head, usePage } from '@inertiajs/react';
 import { AlertCircle, Edit2, Trash2, Plus, Check, X } from 'lucide-react';
-import { AppLayout } from '@/layouts/AppLayout';
+import AppLayout from '@/layouts/app-layout';
 
 interface MarginRule {
     id: number;
