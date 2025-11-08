@@ -25,7 +25,8 @@ class QuotationCreationTest extends TestCase
         $this->destinationPort = Location::factory()->create(['code' => 'LAX', 'name' => 'Los Angeles']);
     }
 
-    it('can create a new quotation with dimensions', function () {
+    public function test_can_create_a_new_quotation_with_dimensions()
+    {
         $this->actingAs($this->user);
 
         $response = $this->post('/quotations', [
