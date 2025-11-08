@@ -15,20 +15,19 @@ class QuotationCostLine extends Model
     protected $fillable = [
         'quotation_header_id',
         'charge_id',
-        'all_vendor_costs_json',
+        'all_vendor_costs',
         'selected_vendor_id',
         'unit_cost_rate',
         'unit_cost_currency',
         'cost_exchange_rate',
         'total_cost_inr',
-        'notes',
     ];
 
     protected function casts(): array
     {
         return [
-            'all_vendor_costs_json' => 'array',
-            'unit_cost_rate' => 'decimal:4',
+            'all_vendor_costs' => 'array',
+            'unit_cost_rate' => 'decimal:2',
             'cost_exchange_rate' => 'decimal:6',
             'total_cost_inr' => 'decimal:2',
         ];
@@ -60,15 +59,15 @@ class QuotationCostLine extends Model
 
     /**
      * Check if current selection is the cheapest (Rank 1)
-     * Compare selected_vendor_id against all_vendor_costs_json
+     * Compare selected_vendor_id against all_vendor_costs
      */
     public function isCurrentSelectionCheapest(): bool
     {
-        if (! $this->all_vendor_costs_json) {
+        if (! $this->all_vendor_costs) {
             return true; // No alternatives
         }
 
-        $vendorCosts = $this->all_vendor_costs_json;
+        $vendorCosts = $this->all_vendor_costs;
         $minCost = min($vendorCosts);
         $currentCost = (float) $this->unit_cost_rate * (float) $this->cost_exchange_rate;
 
@@ -82,12 +81,12 @@ class QuotationCostLine extends Model
      */
     public function getVendorOptionsAttribute(): array
     {
-        if (! $this->all_vendor_costs_json) {
+        if (! $this->all_vendor_costs) {
             return [];
         }
 
         $options = [];
-        foreach ($this->all_vendor_costs_json as $vendorId => $cost) {
+        foreach ($this->all_vendor_costs as $vendorId => $cost) {
             $vendor = Supplier::find($vendorId);
             if ($vendor) {
                 $options[] = [
@@ -95,7 +94,7 @@ class QuotationCostLine extends Model
                     'vendor_name' => $vendor->name,
                     'cost' => (float) $cost,
                     'is_current_selection' => $this->selected_vendor_id == $vendor->id,
-                    'is_rank_1' => abs((float) $cost - min($this->all_vendor_costs_json)) < 0.01,
+                    'is_rank_1' => abs((float) $cost - min($this->all_vendor_costs)) < 0.01,
                 ];
             }
         }

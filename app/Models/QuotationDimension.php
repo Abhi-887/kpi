@@ -19,6 +19,9 @@ class QuotationDimension extends Model
         'height_cm',
         'pieces',
         'actual_weight_per_piece_kg',
+        'total_actual_weight_kg',
+        'volume_cbm',
+        'volumetric_weight_kg',
         'sequence',
     ];
 
@@ -30,6 +33,9 @@ class QuotationDimension extends Model
             'height_cm' => 'decimal:2',
             'pieces' => 'integer',
             'actual_weight_per_piece_kg' => 'decimal:2',
+            'total_actual_weight_kg' => 'decimal:2',
+            'volume_cbm' => 'decimal:4',
+            'volumetric_weight_kg' => 'decimal:2',
         ];
     }
 
@@ -76,7 +82,7 @@ class QuotationDimension extends Model
      */
     public function getVolumetricWeightAttribute(?int $divisor = null): float
     {
-        $divisor = $divisor ?? config('app.volumetric_divisor', 167);
+        $divisor = $divisor ?? 167; // Default divisor for volumetric weight
 
         return $this->total_cbm_for_row * $divisor;
     }
