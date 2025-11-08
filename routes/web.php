@@ -5,7 +5,6 @@ use App\Http\Controllers\ChargeController;
 use App\Http\Controllers\ChargeRuleController;
 use App\Http\Controllers\ContainerTypeController;
 use App\Http\Controllers\CostComponentController;
-use App\Http\Controllers\CostingController;
 use App\Http\Controllers\CourierPriceController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
@@ -22,6 +21,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PackagingPriceController;
 use App\Http\Controllers\PriceComparisonController;
 use App\Http\Controllers\PriceListController;
+use App\Http\Controllers\QuotationApprovalController;
 use App\Http\Controllers\QuotationController;
 use App\Http\Controllers\QuoteController;
 use App\Http\Controllers\RateCardController;
@@ -127,22 +127,39 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Quotes routes
     Route::resource('quotes', QuoteController::class);
 
-    // Quotation routes (Module 19 & 20)
+    // Quotation Module Routes (19-23)
     Route::resource('quotations', QuotationController::class);
-    Route::post('quotations/{quotation}/prepare-for-costing', [QuotationController::class, 'prepareForCosting'])->name('quotations.prepare-for-costing');
-    Route::post('quotations/{quotation}/duplicate', [QuotationController::class, 'duplicate'])->name('quotations.duplicate');
 
-    // Costing routes (Module 20 - The comparison grid)
-    Route::prefix('quotations/{quotation}/costing')->group(function () {
-        Route::get('', [CostingController::class, 'show'])->name('quotations.costing');
-        Route::post('initiate', [CostingController::class, 'initiateCostingProcess'])->name('quotations.costing.initiate');
-        Route::get('summary', [CostingController::class, 'summary'])->name('quotations.costing.summary');
-        Route::post('finalize', [CostingController::class, 'finalizeCosts'])->name('quotations.costing.finalize');
+    // Module 19: Quotation Creation
+    // Already handled by resource routes: create, store
+
+    // Module 20: Costing & Comparison
+    Route::prefix('quotations/{quotation}')->group(function () {
+        Route::post('prepare-for-costing', [QuotationController::class, 'prepareForCosting'])->name('quotations.prepare-for-costing');
+        Route::get('costing', [QuotationController::class, 'costing'])->name('quotations.costing');
+        Route::post('finalize-costs', [QuotationController::class, 'finalizeCosts'])->name('quotations.finalize-costs');
+
+        // Module 21: Quotation Builder (Pricing)
+        Route::get('pricing', [QuotationController::class, 'pricing'])->name('quotations.pricing');
+        Route::post('finalize-pricing', [QuotationController::class, 'finalizePricing'])->name('quotations.finalize-pricing');
+
+        // Module 22: Management
+        Route::post('duplicate', [QuotationController::class, 'duplicate'])->name('quotations.duplicate');
+        Route::post('update-status', [QuotationController::class, 'updateStatus'])->name('quotations.update-status');
     });
 
-    // Cost Line API endpoints
-    Route::prefix('api/cost-lines')->group(function () {
-        Route::patch('{costLine}/update-vendor', [CostingController::class, 'updateCostLineVendor'])->name('cost-lines.update-vendor');
+    // Cost Line API endpoints (Module 20)
+    Route::patch('api/cost-lines/{costLine}/update-vendor', [QuotationController::class, 'updateCostLineVendor'])->name('cost-lines.update-vendor');
+
+    // Sale Line API endpoints (Module 21)
+    Route::patch('api/sale-lines/{saleLine}/update-price', [QuotationController::class, 'updateSalePrice'])->name('sale-lines.update-price');
+
+    // Module 23: Quotation Approval Workflow
+    Route::prefix('quotations-approval')->group(function () {
+        Route::get('', [QuotationApprovalController::class, 'index'])->name('quotations.approval.index');
+        Route::get('{quotation}', [QuotationApprovalController::class, 'show'])->name('quotations.approval.show');
+        Route::post('{quotation}/approve', [QuotationApprovalController::class, 'approve'])->name('quotations.approval.approve');
+        Route::post('{quotation}/reject', [QuotationApprovalController::class, 'reject'])->name('quotations.approval.reject');
     });
 
     // Customers routes

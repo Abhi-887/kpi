@@ -34,7 +34,15 @@ interface IndexProps {
   quotations: {
     data: Quotation[]
     links: PaginationLink[]
-    meta: any
+    meta?: {
+      last_page: number
+      current_page: number
+    }
+    path?: string
+    per_page?: number
+    total?: number
+    last_page?: number
+    current_page?: number
   }
   filters: any
 }
@@ -58,18 +66,18 @@ const modeColors: Record<string, string> = {
 
 export default function Index({ quotations, filters }: IndexProps) {
   const breadcrumbs: BreadcrumbItem[] = [{ title: 'Quotations', href: '/quotations' }]
-  const [search, setSearch] = useState(filters.search || '')
-  const [status, setStatus] = useState(filters.quote_status || '')
-  const [mode, setMode] = useState(filters.mode || '')
-  const [movement, setMovement] = useState(filters.movement || '')
+  const [search, setSearch] = useState(filters?.search || '')
+  const [status, setStatus] = useState(filters?.quote_status || 'all')
+  const [mode, setMode] = useState(filters?.mode || 'all')
+  const [movement, setMovement] = useState(filters?.movement || 'all')
 
   const handleFilter = () => {
     router.get('/quotations', {
       search,
-      quote_status: status,
-      mode,
-      movement,
-      per_page: filters.per_page || 20,
+      quote_status: status === 'all' ? '' : status,
+      mode: mode === 'all' ? '' : mode,
+      movement: movement === 'all' ? '' : movement,
+      per_page: filters?.per_page || 20,
     })
   }
 
@@ -134,7 +142,7 @@ export default function Index({ quotations, filters }: IndexProps) {
                     <SelectValue placeholder="All statuses" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Statuses</SelectItem>
+                    <SelectItem value="all">All Statuses</SelectItem>
                     <SelectItem value="Draft">Draft</SelectItem>
                     <SelectItem value="Pending Costing">Pending Costing</SelectItem>
                     <SelectItem value="Pending Approval">Pending Approval</SelectItem>
@@ -153,7 +161,7 @@ export default function Index({ quotations, filters }: IndexProps) {
                     <SelectValue placeholder="All modes" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Modes</SelectItem>
+                    <SelectItem value="all">All Modes</SelectItem>
                     <SelectItem value="AIR">Air</SelectItem>
                     <SelectItem value="SEA">Sea</SelectItem>
                     <SelectItem value="ROAD">Road</SelectItem>
@@ -169,7 +177,7 @@ export default function Index({ quotations, filters }: IndexProps) {
                     <SelectValue placeholder="All movements" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Movements</SelectItem>
+                    <SelectItem value="all">All Movements</SelectItem>
                     <SelectItem value="IMPORT">Import</SelectItem>
                     <SelectItem value="EXPORT">Export</SelectItem>
                     <SelectItem value="DOMESTIC">Domestic</SelectItem>
@@ -275,9 +283,9 @@ export default function Index({ quotations, filters }: IndexProps) {
         </Card>
 
         {/* Pagination */}
-        {quotations.meta.last_page > 1 && (
+        {(quotations.meta?.last_page ?? quotations.last_page ?? 1) > 1 && (
           <div className="flex justify-center gap-2">
-            {quotations.links.map((link, idx) => (
+            {quotations.links?.map((link, idx) => (
               <Button
                 key={idx}
                 variant={link.active ? 'default' : 'outline'}

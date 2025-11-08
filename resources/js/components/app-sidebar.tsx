@@ -63,7 +63,16 @@ const navGroups: NavGroup[] = [
     {
         title: 'Sales & Operations',
         items: [
-            { title: 'Quotations', href: '/quotations', icon: FileText },
+            {
+                title: 'Quotations',
+                href: '/quotations',
+                icon: FileText,
+                children: [
+                    { title: 'All Quotations', href: '/quotations', icon: FileText },
+                    { title: 'Create New', href: '/quotations/create', icon: FileText },
+                    { title: 'Pending Approval', href: '/quotations-approval', icon: FileText },
+                ],
+            },
             { title: 'Orders', href: '/orders', icon: ShoppingCart },
             { title: 'Shipments', href: '/shipments', icon: Package },
             { title: 'Invoices', href: '/invoices', icon: Receipt },
