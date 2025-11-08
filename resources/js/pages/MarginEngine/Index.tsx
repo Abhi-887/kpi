@@ -33,6 +33,7 @@ interface PageProps {
     rules: MarginRule[];
     charges: Charge[];
     customers: Customer[];
+    csrf_token?: string;
 }
 
 const SpecificityBadge = ({ rule }: { rule: MarginRule }) => {
@@ -60,7 +61,7 @@ const PrecedenceIndicator = ({ precedence }: { precedence: number }) => {
 };
 
 export default function MarginEngineIndex() {
-    const { rules, charges, customers } = usePage<PageProps>().props;
+    const { rules, charges, customers, csrf_token } = usePage().props as any;
     const [displayRules, setDisplayRules] = useState<MarginRule[]>(rules);
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState('');
@@ -88,7 +89,7 @@ export default function MarginEngineIndex() {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+                    'X-CSRF-Token': csrf_token,
                 },
                 body: JSON.stringify({
                     cost_inr: testCost,
@@ -113,7 +114,7 @@ export default function MarginEngineIndex() {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+                    'X-CSRF-Token': csrf_token,
                 },
                 body: JSON.stringify(formData),
             });
@@ -139,7 +140,7 @@ export default function MarginEngineIndex() {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+                    'X-CSRF-Token': csrf_token,
                 },
                 body: JSON.stringify({ rule_id: ruleId }),
             });

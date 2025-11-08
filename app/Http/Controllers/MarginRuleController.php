@@ -26,7 +26,6 @@ class MarginRuleController extends Controller
                 ->orderByDesc('precedence')
                 ->get(),
             'charges' => Charge::query()
-                ->where('is_active', true)
                 ->orderBy('charge_code')
                 ->get(),
             'customers' => Customer::query()
