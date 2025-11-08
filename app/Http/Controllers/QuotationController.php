@@ -7,6 +7,7 @@ use App\Http\Requests\StoreQuotationHeaderRequest;
 use App\Models\Customer;
 use App\Models\Location;
 use App\Models\QuotationHeader;
+use App\Models\User;
 use App\Services\DimensionCalculationService;
 use App\Services\QuotationCostingService;
 use App\Services\QuotationPricingService;
@@ -94,9 +95,21 @@ class QuotationController extends Controller
             ->orderBy('name')
             ->get();
 
+        $locations = Location::query()
+            ->select('id', 'name', 'code', 'country', 'city')
+            ->orderBy('name')
+            ->get();
+
+        $salespersons = User::query()
+            ->select('id', 'name')
+            ->orderBy('name')
+            ->get();
+
         return Inertia::render('Quotations/Create', [
             'customers' => $customers,
             'ports' => $ports,
+            'locations' => $locations,
+            'salespersons' => $salespersons,
             'modes' => ['AIR', 'SEA', 'ROAD', 'RAIL', 'MULTIMODAL'],
             'movements' => ['IMPORT', 'EXPORT', 'DOMESTIC', 'INTER_MODAL'],
             'incoterms' => ['EXW', 'FCA', 'CPT', 'CIP', 'DAP', 'DDP', 'FOB', 'CFR', 'CIF'],
