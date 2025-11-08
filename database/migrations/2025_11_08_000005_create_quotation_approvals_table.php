@@ -37,7 +37,6 @@ return new class extends Migration
             $table->timestamps();
 
             $table->index('quotation_header_id');
-            $table->index('approval_status');
             $table->index('submitted_by_user_id');
             $table->index('approver_user_id');
         });
