@@ -4,14 +4,11 @@ import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import AppLayout from '@/layouts/app-layout'
 import { Head, router } from '@inertiajs/react'
 import { type BreadcrumbItem } from '@/types'
 import { useState, useEffect } from 'react'
 import { Plus, X, AlertCircle, Check, Loader2, ChevronDown } from 'lucide-react'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { Checkbox } from '@/components/ui/checkbox'
 
 interface Charge {
     id: number
@@ -30,9 +27,15 @@ interface ChargeRule {
     notes?: string
 }
 
+interface RuleCombination {
+    mode: string
+    movement: string
+    terms: string
+}
+
 interface PageProps {
     rules: ChargeRule[]
-    combinations: any[]
+    combinations: RuleCombination[]
     charges: Charge[]
     modes: string[]
     movements: string[]
@@ -53,9 +56,9 @@ export default function ChargeApplicabilityIndex({
     commonTerms,
 }: PageProps) {
     const breadcrumbs: BreadcrumbItem[] = [
-        { label: 'Dashboard', href: '/' },
-        { label: 'Pricing', href: '#' },
-        { label: 'Charge Applicability Engine' },
+        { title: 'Dashboard', href: '/' },
+        { title: 'Pricing', href: '#' },
+        { title: 'Charge Applicability Engine', href: '#' },
     ]
 
     const [selectedMode, setSelectedMode] = useState<string>(modes[0] || '')
@@ -378,53 +381,39 @@ export default function ChargeApplicabilityIndex({
                             <CardHeader>
                                 <CardTitle>Complete Rule Summary</CardTitle>
                             </CardHeader>
-                            <CardContent>
-                                <div className="overflow-x-auto">
-                                    <Table>
-                                        <TableHeader>
-                                            <TableRow>
-                                                <TableHead>Mode</TableHead>
-                                                <TableHead>Movement</TableHead>
-                                                <TableHead>Terms</TableHead>
-                                                <TableHead>Charges Count</TableHead>
-                                            </TableRow>
-                                        </TableHeader>
-                                        <TableBody>
-                                            {combinations.map((combo, idx) => {
-                                                const rulesForCombo = rules.filter(
-                                                    r =>
-                                                        r.mode === combo.mode &&
-                                                        r.movement === combo.movement &&
-                                                        r.terms === combo.terms &&
-                                                        r.is_active
-                                                )
-                                                return (
-                                                    <TableRow key={idx} className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-900/50"
-                                                        onClick={() => {
-                                                            setSelectedMode(combo.mode)
-                                                            setSelectedMovement(combo.movement)
-                                                            setSelectedTerms(combo.terms)
-                                                        }}
+                            <CardContent className="space-y-3">
+                                <div className="space-y-2">
+                                    {combinations.map((combo: RuleCombination, idx: number) => {
+                                        const rulesForCombo = rules.filter(
+                                            r =>
+                                                (r as any).mode === combo.mode &&
+                                                (r as any).movement === combo.movement &&
+                                                (r as any).terms === combo.terms &&
+                                                r.is_active
+                                        )
+                                        return (
+                                            <div
+                                                key={idx}
+                                                className="flex items-center justify-between p-3 rounded-lg border border-gray-200 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-900/50 cursor-pointer"
+                                                onClick={() => {
+                                                    setSelectedMode(combo.mode)
+                                                    setSelectedMovement(combo.movement)
+                                                    setSelectedTerms(combo.terms)
+                                                }}
+                                            >
+                                                <div className="flex items-center gap-3">
+                                                    <Badge variant="outline">{combo.mode}</Badge>
+                                                    <Badge variant="outline">{combo.movement}</Badge>
+                                                    <Badge
+                                                        variant={combo.terms === 'ALL_TERMS' ? 'default' : 'secondary'}
                                                     >
-                                                        <TableCell>
-                                                            <Badge variant="outline">{combo.mode}</Badge>
-                                                        </TableCell>
-                                                        <TableCell>
-                                                            <Badge variant="outline">{combo.movement}</Badge>
-                                                        </TableCell>
-                                                        <TableCell>
-                                                            <Badge
-                                                                variant={combo.terms === 'ALL_TERMS' ? 'default' : 'secondary'}
-                                                            >
-                                                                {combo.terms === 'ALL_TERMS' ? 'Universal' : combo.terms}
-                                                            </Badge>
-                                                        </TableCell>
-                                                        <TableCell className="font-medium">{rulesForCombo.length}</TableCell>
-                                                    </TableRow>
-                                                )
-                                            })}
-                                        </TableBody>
-                                    </Table>
+                                                        {combo.terms === 'ALL_TERMS' ? 'Universal' : combo.terms}
+                                                    </Badge>
+                                                </div>
+                                                <div className="font-medium text-sm">{rulesForCombo.length} charges</div>
+                                            </div>
+                                        )
+                                    })}
                                 </div>
                             </CardContent>
                         </Card>
