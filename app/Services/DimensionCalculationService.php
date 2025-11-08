@@ -68,7 +68,7 @@ class DimensionCalculationService
      * For SEA: max(actual_weight, volumetric_weight) but volumetric usually doesn't apply
      * For ROAD/RAIL: actual weight
      */
-    public function calculateChargeableWeight(array $dimensions, string $mode): float
+    public function calculateChargeableWeight(array|\Illuminate\Database\Eloquent\Collection $dimensions, string $mode): float
     {
         if (empty($dimensions)) {
             return 0;

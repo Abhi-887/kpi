@@ -201,16 +201,21 @@ export default function Show({ quotation }: ShowProps) {
                   </thead>
                   <tbody>
                     {quotation.dimensions.map((dim, idx) => {
-                      const cbmPerPiece = (dim.length_cm * dim.width_cm * dim.height_cm) / 1_000_000
-                      const totalCbm = cbmPerPiece * dim.pieces
-                      const totalWeight = dim.actual_weight_per_piece_kg * dim.pieces
+                      const length = Number(dim.length_cm)
+                      const width = Number(dim.width_cm)
+                      const height = Number(dim.height_cm)
+                      const pieces = Number(dim.pieces)
+                      const weight = Number(dim.actual_weight_per_piece_kg)
+                      const cbmPerPiece = (length * width * height) / 1_000_000
+                      const totalCbm = cbmPerPiece * pieces
+                      const totalWeight = weight * pieces
                       return (
                         <tr key={dim.id} className={idx % 2 === 0 ? 'bg-muted/50 dark:bg-gray-900/30' : ''}>
-                          <td className="px-4 py-3 font-mono">{dim.length_cm.toFixed(2)}</td>
-                          <td className="px-4 py-3 font-mono">{dim.width_cm.toFixed(2)}</td>
-                          <td className="px-4 py-3 font-mono">{dim.height_cm.toFixed(2)}</td>
-                          <td className="px-4 py-3 text-center font-mono">{dim.pieces}</td>
-                          <td className="px-4 py-3 text-right font-mono">{dim.actual_weight_per_piece_kg.toFixed(2)}</td>
+                          <td className="px-4 py-3 font-mono">{length.toFixed(2)}</td>
+                          <td className="px-4 py-3 font-mono">{width.toFixed(2)}</td>
+                          <td className="px-4 py-3 font-mono">{height.toFixed(2)}</td>
+                          <td className="px-4 py-3 text-center font-mono">{pieces}</td>
+                          <td className="px-4 py-3 text-right font-mono">{weight.toFixed(2)}</td>
                           <td className="px-4 py-3 text-right font-mono">{totalCbm.toFixed(4)}</td>
                           <td className="px-4 py-3 text-right font-mono font-semibold">{totalWeight.toFixed(2)}</td>
                         </tr>
