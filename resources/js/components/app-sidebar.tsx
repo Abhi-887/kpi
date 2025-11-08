@@ -13,7 +13,7 @@ import {
 import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid, Package, DollarSign, FileText, Users, ShoppingCart, Receipt, Bell, Zap, Settings, History, TrendingUp, Layers, Database, Tag, MapPin } from 'lucide-react';
+import { BookOpen, Folder, LayoutGrid, Package, DollarSign, FileText, Users, ShoppingCart, Receipt, Bell, Zap, Settings, History, TrendingUp, Layers, Database, Tag, MapPin, Calculator, Percent } from 'lucide-react';
 import AppLogo from './app-logo';
 import React, { useEffect, useRef } from 'react';
 import { type NavGroup } from '@/types';
@@ -46,6 +46,8 @@ const navGroups: NavGroup[] = [
             { title: 'Exchange Rates', href: '/exchange-rates', icon: TrendingUp },
             { title: 'Charge Applicability', href: '/charge-applicability', icon: Zap },
             { title: 'Margin Engine', href: '/margin-engine', icon: TrendingUp },
+            { title: 'Formula Engine', href: '/formula-engine', icon: Calculator },
+            { title: 'Tax Calculation Engine', href: '/tax-engine', icon: Percent },
             {
                 title: 'Pricing Tables',
                 href: '/pricing',

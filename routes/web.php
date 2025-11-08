@@ -4,17 +4,18 @@ use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\ChargeController;
 use App\Http\Controllers\ChargeRuleController;
 use App\Http\Controllers\ContainerTypeController;
-use App\Http\Controllers\MarginRuleController;
 use App\Http\Controllers\CostComponentController;
 use App\Http\Controllers\CourierPriceController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ExchangeRateController;
+use App\Http\Controllers\FormulaCalculatorController;
 use App\Http\Controllers\ForwardingPriceController;
 use App\Http\Controllers\IntegrationController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\LocationController;
+use App\Http\Controllers\MarginRuleController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PackagingPriceController;
@@ -24,6 +25,7 @@ use App\Http\Controllers\QuoteController;
 use App\Http\Controllers\RateCardController;
 use App\Http\Controllers\ShipmentController;
 use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\TaxCalculationEngineController;
 use App\Http\Controllers\TaxCodeController;
 use App\Http\Controllers\UnitOfMeasureController;
 use App\Http\Controllers\VendorRateController;
@@ -183,6 +185,28 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('forwarding-prices', ForwardingPriceController::class);
     Route::resource('courier-prices', CourierPriceController::class);
     Route::resource('packaging-prices', PackagingPriceController::class);
+
+    // Formula Engine routes
+    Route::prefix('formula-engine')->group(function () {
+        Route::get('', [FormulaCalculatorController::class, 'index'])->name('formula-engine.index');
+    });
+
+    // Formula Engine API routes
+    Route::prefix('formula')->group(function () {
+        Route::post('calculate-cbm', [FormulaCalculatorController::class, 'calculateCBM'])->name('formula.calculate-cbm');
+        Route::post('calculate-volumetric-weight', [FormulaCalculatorController::class, 'calculateVolumetricWeight'])->name('formula.calculate-volumetric-weight');
+        Route::post('calculate-chargeable-weight', [FormulaCalculatorController::class, 'calculateChargeableWeight'])->name('formula.calculate-chargeable-weight');
+        Route::post('calculate-all', [FormulaCalculatorController::class, 'calculateAll'])->name('formula.calculate-all');
+    });
+
+    // Tax Calculation Engine routes
+    Route::prefix('tax-engine')->group(function () {
+        Route::get('', [TaxCalculationEngineController::class, 'index'])->name('tax-engine.index');
+
+        // API endpoints for Tax Engine
+        Route::post('calculate', [TaxCalculationEngineController::class, 'calculate'])->name('tax-engine.calculate');
+        Route::post('calculate-batch', [TaxCalculationEngineController::class, 'calculateBatch'])->name('tax-engine.calculate-batch');
+    });
 });
 
 require __DIR__.'/settings.php';
