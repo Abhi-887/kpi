@@ -48,13 +48,13 @@ interface IndexProps {
 }
 
 const statusColors: Record<string, string> = {
-  Draft: 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400',
-  'Pending Costing': 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400',
-  'Pending Approval': 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400',
-  Sent: 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400',
-  Won: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
-  Lost: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400',
-  Cancelled: 'bg-stone-100 text-stone-800 dark:bg-stone-900/30 dark:text-stone-400',
+  draft: 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400',
+  pending_costing: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400',
+  pending_approval: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400',
+  sent: 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400',
+  won: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
+  lost: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400',
+  cancelled: 'bg-stone-100 text-stone-800 dark:bg-stone-900/30 dark:text-stone-400',
 }
 
 const modeColors: Record<string, string> = {

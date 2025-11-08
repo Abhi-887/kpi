@@ -13,21 +13,16 @@ interface QuotationData {
   customer: { id: number; company_name: string; email: string; phone: string }
   created_by: { id: number; name: string }
   salesperson: { id: number; name: string } | null
-  shipment_details: {
-    mode: string
-    movement: string
-    terms: string
-    origin_port: { id: number; code: string; name: string; city: string; country: string }
-    destination_port: { id: number; code: string; name: string; city: string; country: string }
-    origin_location: { id: number; code: string; name: string } | null
-    destination_location: { id: number; code: string; name: string } | null
-  }
-  totals: {
-    total_actual_weight: number
-    total_cbm: number
-    total_pieces: number
-    total_chargeable_weight: number
-  }
+  mode: string
+  movement: string
+  terms: string
+  origin_port_id: number
+  destination_port_id: number
+  origin_location_id: number | null
+  destination_location_id: number | null
+  total_chargeable_weight: number | string
+  total_cbm: number | string
+  total_pieces: number
   dimensions: Array<{
     id: number
     length_cm: number
@@ -35,11 +30,21 @@ interface QuotationData {
     height_cm: number
     pieces: number
     actual_weight_per_piece_kg: number
-    cbm_per_piece: number
-    total_weight_for_row_kg: number
-    total_cbm_for_row: number
-    sequence: number
   }>
+  originPort?: {
+    id: number
+    code: string
+    name: string
+    city: string
+    country: string
+  }
+  destinationPort?: {
+    id: number
+    code: string
+    name: string
+    city: string
+    country: string
+  }
   notes: string | null
   created_at: string
   updated_at: string
@@ -50,13 +55,13 @@ interface ShowProps {
 }
 
 const statusColors: Record<string, string> = {
-  Draft: 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400',
-  'Pending Costing': 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400',
-  'Pending Approval': 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400',
-  Sent: 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400',
-  Won: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
-  Lost: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400',
-  Cancelled: 'bg-stone-100 text-stone-800 dark:bg-stone-900/30 dark:text-stone-400',
+  draft: 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400',
+  pending_costing: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400',
+  pending_approval: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400',
+  sent: 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400',
+  won: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
+  lost: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400',
+  cancelled: 'bg-stone-100 text-stone-800 dark:bg-stone-900/30 dark:text-stone-400',
 }
 
 const modeColors: Record<string, string> = {
@@ -127,15 +132,15 @@ export default function Show({ quotation }: ShowProps) {
             <CardContent className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
               <div>
                 <p className="text-sm text-muted-foreground">Mode</p>
-                <Badge className={modeColors[quotation.shipment_details.mode]}>{quotation.shipment_details.mode}</Badge>
+                <Badge className={modeColors[quotation.mode]}>{quotation.mode}</Badge>
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Movement</p>
-                <p className="font-semibold">{quotation.shipment_details.movement}</p>
+                <p className="font-semibold">{quotation.movement}</p>
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Terms (Incoterms)</p>
-                <p className="font-semibold">{quotation.shipment_details.terms}</p>
+                <p className="font-semibold">{quotation.terms}</p>
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Created</p>
@@ -154,17 +159,21 @@ export default function Show({ quotation }: ShowProps) {
                 <div>
                   <p className="text-sm text-muted-foreground mb-2">Origin Port</p>
                   <div className="rounded-lg border p-3 bg-muted/50">
-                    <p className="font-mono font-semibold">{quotation.shipment_details.origin_port.code}</p>
-                    <p className="text-sm">{quotation.shipment_details.origin_port.name}</p>
-                    <p className="text-xs text-muted-foreground">{quotation.shipment_details.origin_port.city}, {quotation.shipment_details.origin_port.country}</p>
+                    <p className="font-mono font-semibold">{quotation.originPort?.code || 'N/A'}</p>
+                    <p className="text-sm">{quotation.originPort?.name || ''}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {quotation.originPort?.city}, {quotation.originPort?.country}
+                    </p>
                   </div>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground mb-2">Destination Port</p>
                   <div className="rounded-lg border p-3 bg-muted/50">
-                    <p className="font-mono font-semibold">{quotation.shipment_details.destination_port.code}</p>
-                    <p className="text-sm">{quotation.shipment_details.destination_port.name}</p>
-                    <p className="text-xs text-muted-foreground">{quotation.shipment_details.destination_port.city}, {quotation.shipment_details.destination_port.country}</p>
+                    <p className="font-mono font-semibold">{quotation.destinationPort?.code || 'N/A'}</p>
+                    <p className="text-sm">{quotation.destinationPort?.name || ''}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {quotation.destinationPort?.city}, {quotation.destinationPort?.country}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -191,34 +200,41 @@ export default function Show({ quotation }: ShowProps) {
                     </tr>
                   </thead>
                   <tbody>
-                    {quotation.dimensions.map((dim, idx) => (
-                      <tr key={dim.id} className={idx % 2 === 0 ? 'bg-muted/50 dark:bg-gray-900/30' : ''}>
-                        <td className="px-4 py-3 font-mono">{dim.length_cm.toFixed(2)}</td>
-                        <td className="px-4 py-3 font-mono">{dim.width_cm.toFixed(2)}</td>
-                        <td className="px-4 py-3 font-mono">{dim.height_cm.toFixed(2)}</td>
-                        <td className="px-4 py-3 text-center font-mono">{dim.pieces}</td>
-                        <td className="px-4 py-3 text-right font-mono">{dim.actual_weight_per_piece_kg.toFixed(2)}</td>
-                        <td className="px-4 py-3 text-right font-mono">{dim.total_cbm_for_row.toFixed(4)}</td>
-                        <td className="px-4 py-3 text-right font-mono font-semibold">{dim.total_weight_for_row_kg.toFixed(2)}</td>
-                      </tr>
-                    ))}
+                    {quotation.dimensions.map((dim, idx) => {
+                      const cbmPerPiece = (dim.length_cm * dim.width_cm * dim.height_cm) / 1_000_000
+                      const totalCbm = cbmPerPiece * dim.pieces
+                      const totalWeight = dim.actual_weight_per_piece_kg * dim.pieces
+                      return (
+                        <tr key={dim.id} className={idx % 2 === 0 ? 'bg-muted/50 dark:bg-gray-900/30' : ''}>
+                          <td className="px-4 py-3 font-mono">{dim.length_cm.toFixed(2)}</td>
+                          <td className="px-4 py-3 font-mono">{dim.width_cm.toFixed(2)}</td>
+                          <td className="px-4 py-3 font-mono">{dim.height_cm.toFixed(2)}</td>
+                          <td className="px-4 py-3 text-center font-mono">{dim.pieces}</td>
+                          <td className="px-4 py-3 text-right font-mono">{dim.actual_weight_per_piece_kg.toFixed(2)}</td>
+                          <td className="px-4 py-3 text-right font-mono">{totalCbm.toFixed(4)}</td>
+                          <td className="px-4 py-3 text-right font-mono font-semibold">{totalWeight.toFixed(2)}</td>
+                        </tr>
+                      )
+                    })}
                   </tbody>
                   <tfoot>
                     <tr className="bg-muted/70 font-semibold">
                       <td colSpan={3} className="px-4 py-3 text-right">
                         TOTALS
                       </td>
-                      <td className="px-4 py-3 text-center font-mono">{quotation.totals.total_pieces}</td>
+                      <td className="px-4 py-3 text-center font-mono">{quotation.total_pieces}</td>
                       <td />
-                      <td className="px-4 py-3 text-right font-mono">{quotation.totals.total_cbm.toFixed(4)}</td>
-                      <td className="px-4 py-3 text-right font-mono">{quotation.totals.total_actual_weight.toFixed(2)}</td>
+                      <td className="px-4 py-3 text-right font-mono">{Number(quotation.total_cbm).toFixed(4)}</td>
+                      <td className="px-4 py-3 text-right font-mono">
+                        {quotation.dimensions.reduce((sum, dim) => sum + dim.actual_weight_per_piece_kg * dim.pieces, 0).toFixed(2)}
+                      </td>
                     </tr>
                     <tr className="bg-blue-50 dark:bg-blue-900/20">
                       <td colSpan={6} className="px-4 py-3 text-right font-semibold">
                         Chargeable Weight:
                       </td>
                       <td className="px-4 py-3 text-right font-mono font-bold text-blue-600 dark:text-blue-400">
-                        {quotation.totals.total_chargeable_weight.toFixed(2)} kg
+                        {Number(quotation.total_chargeable_weight).toFixed(2)} kg
                       </td>
                     </tr>
                   </tfoot>

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class QuotationHeader extends Model
@@ -95,9 +96,9 @@ class QuotationHeader extends Model
         return $this->hasMany(QuotationSaleLine::class);
     }
 
-    public function approval(): BelongsTo
+    public function approval(): HasOne
     {
-        return $this->belongsTo(QuotationApproval::class, 'id', 'quotation_header_id')->latestOfMany();
+        return $this->hasOne(QuotationApproval::class, 'quotation_header_id')->latestOfMany();
     }
 
     // Accessors
