@@ -54,7 +54,11 @@ class TaxCodeController extends Controller
             'is_active' => 'boolean',
         ]);
 
-        TaxCode::create($validated);
+        $tax = TaxCode::create($validated);
+
+        if ($request->expectsJson()) {
+            return response()->json(['tax' => $tax], 201);
+        }
 
         return redirect()->route('tax-codes.index')->with('success', 'Tax Code created successfully');
     }
@@ -82,12 +86,20 @@ class TaxCodeController extends Controller
 
         $taxCode->update($validated);
 
+        if ($request->expectsJson()) {
+            return response()->json(['tax' => $taxCode], 200);
+        }
+
         return redirect()->route('tax-codes.index')->with('success', 'Tax Code updated successfully');
     }
 
     public function destroy(TaxCode $taxCode)
     {
         $taxCode->delete();
+
+        if (request()->expectsJson()) {
+            return response()->json([], 204);
+        }
 
         return redirect()->route('tax-codes.index')->with('success', 'Tax Code deleted successfully');
     }

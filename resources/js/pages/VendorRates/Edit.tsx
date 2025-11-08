@@ -61,17 +61,23 @@ interface UnitOfMeasure {
 }
 
 export default function EditRateCard() {
-  const { rate, suppliers, locations, charges, uoms } = usePage().props as any
+  const props = usePage().props as any
+  const rate = props.rate || {}
+  const suppliers = props.vendors || []
+  const locations = props.locations || []
+  const charges = props.charges || []
+  const uoms = props.uoms || []
+  
   const [formData, setFormData] = useState({
-    vendor_id: String(rate.vendor_id),
-    origin_port_id: String(rate.origin_port_id),
-    destination_port_id: String(rate.destination_port_id),
-    mode: rate.mode,
-    movement: rate.movement,
-    terms: rate.terms,
-    valid_from: rate.valid_from,
-    valid_upto: rate.valid_upto,
-    is_active: rate.is_active,
+    vendor_id: String(rate.vendor_id || ''),
+    origin_port_id: String(rate.origin_port_id || ''),
+    destination_port_id: String(rate.destination_port_id || ''),
+    mode: rate.mode || 'AIR',
+    movement: rate.movement || 'EXPORT',
+    terms: rate.terms || 'FOB',
+    valid_from: rate.valid_from || '',
+    valid_upto: rate.valid_upto || '',
+    is_active: rate.is_active ?? true,
   })
   const [lines, setLines] = useState<RateLine[]>(rate.lines || [])
 
@@ -307,25 +313,25 @@ export default function EditRateCard() {
                           <tr key={idx}>
                             <td className="px-3 py-2">
                               <select
-                                value={line.charge_id}
+                                value={String(line.charge_id)}
                                 onChange={(e) => handleLineChange(idx, 'charge_id', e.target.value)}
                                 className="w-full px-2 py-1 border rounded text-sm"
                               >
                                 <option value="">Select Charge</option>
-                                {charges.map((c: Charge) => (
-                                  <option key={c.id} value={c.id}>{c.name}</option>
+                                {charges.map((c: any) => (
+                                  <option key={c.id} value={String(c.id)}>{c.charge_code} - {c.charge_name}</option>
                                 ))}
                               </select>
                             </td>
                             <td className="px-3 py-2">
                               <select
-                                value={line.uom_id}
+                                value={String(line.uom_id)}
                                 onChange={(e) => handleLineChange(idx, 'uom_id', e.target.value)}
                                 className="w-full px-2 py-1 border rounded text-sm"
                               >
                                 <option value="">Select UOM</option>
-                                {uoms.map((u: UnitOfMeasure) => (
-                                  <option key={u.id} value={u.id}>{u.code}</option>
+                                {uoms.map((u: any) => (
+                                  <option key={u.id} value={String(u.id)}>{u.symbol} - {u.name}</option>
                                 ))}
                               </select>
                             </td>

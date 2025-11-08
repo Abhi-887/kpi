@@ -1,14 +1,18 @@
 <?php
 
 use App\Http\Controllers\AuditLogController;
+use App\Http\Controllers\ChargeController;
+use App\Http\Controllers\ContainerTypeController;
 use App\Http\Controllers\CostComponentController;
 use App\Http\Controllers\CourierPriceController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ExchangeRateController;
 use App\Http\Controllers\ForwardingPriceController;
-use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\IntegrationController;
+use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\ItemController;
+use App\Http\Controllers\LocationController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PackagingPriceController;
@@ -20,6 +24,7 @@ use App\Http\Controllers\ShipmentController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\TaxCodeController;
 use App\Http\Controllers\UnitOfMeasureController;
+use App\Http\Controllers\VendorRateController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
@@ -37,9 +42,28 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('items', ItemController::class);
     Route::resource('unit-of-measures', UnitOfMeasureController::class);
     Route::resource('tax-codes', TaxCodeController::class);
+    Route::resource('charges', ChargeController::class);
+    Route::resource('container-types', ContainerTypeController::class);
+    Route::resource('ports', LocationController::class);
+    Route::post('ports/bulk-import', [LocationController::class, 'bulkImport'])->name('ports.bulk-import');
     Route::resource('suppliers', SupplierController::class);
     Route::resource('cost-components', CostComponentController::class);
     Route::resource('price-lists', PriceListController::class);
+
+    // Exchange Rates Management
+    Route::prefix('exchange-rates')->group(function () {
+        Route::get('', [ExchangeRateController::class, 'index'])->name('exchange-rates.index');
+        Route::get('create', [ExchangeRateController::class, 'create'])->name('exchange-rates.create');
+        Route::post('', [ExchangeRateController::class, 'store'])->name('exchange-rates.store');
+        Route::get('history/{fromCurrency}/{toCurrency}', [ExchangeRateController::class, 'history'])->name('exchange-rates.history');
+        Route::delete('{exchangeRate}', [ExchangeRateController::class, 'destroy'])->name('exchange-rates.destroy');
+
+        // API endpoints
+        Route::get('api/show', [ExchangeRateController::class, 'show'])->name('exchange-rates.show');
+        Route::get('api/rates', [ExchangeRateController::class, 'getRates'])->name('exchange-rates.rates');
+        Route::post('api/convert', [ExchangeRateController::class, 'convert'])->name('exchange-rates.convert');
+        Route::post('api/destroy-pair', [ExchangeRateController::class, 'destroyPair'])->name('exchange-rates.destroy-pair');
+    });
 
     // Shipments routes
     Route::get('shipments', [ShipmentController::class, 'index'])->name('shipments.index');
@@ -48,6 +72,23 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Rate Cards routes
     Route::resource('rate-cards', RateCardController::class);
+
+    // Vendor Rates Management (Rate Engine)
+    Route::prefix('vendor-rates')->group(function () {
+        Route::get('', [VendorRateController::class, 'index'])->name('vendor-rates.index');
+        Route::get('create', [VendorRateController::class, 'create'])->name('vendor-rates.create');
+        Route::post('', [VendorRateController::class, 'store'])->name('vendor-rates.store');
+        Route::get('{vendorRate}', [VendorRateController::class, 'show'])->name('vendor-rates.show');
+        Route::get('{vendorRate}/edit', [VendorRateController::class, 'edit'])->name('vendor-rates.edit');
+        Route::patch('{vendorRate}', [VendorRateController::class, 'update'])->name('vendor-rates.update');
+        Route::delete('{vendorRate}', [VendorRateController::class, 'destroy'])->name('vendor-rates.destroy');
+
+        // API endpoints for Rate Engine
+        Route::post('find-matching-costs', [VendorRateController::class, 'findMatchingCosts'])->name('vendor-rates.find-costs');
+        Route::get('rates-for-charge', [VendorRateController::class, 'ratesForCharge'])->name('vendor-rates.charge-rates');
+        Route::post('{vendorRate}/validate', [VendorRateController::class, 'validateRate'])->name('vendor-rates.validate');
+        Route::post('{vendorRate}/calculate-cost', [VendorRateController::class, 'calculateVendorCost'])->name('vendor-rates.calculate-cost');
+    });
 
     // Quotes routes
     Route::resource('quotes', QuoteController::class);
