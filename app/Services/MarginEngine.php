@@ -371,8 +371,7 @@ class MarginEngine
             ->whereNotExists(function ($q) {
                 $q->select(1)
                     ->from('customers')
-                    ->whereColumn('customers.id', 'margin_rules.customer_id')
-                    ->where('customers.is_active', true);
+                    ->whereColumn('customers.id', 'margin_rules.customer_id');
             })
             ->where('is_active', true)
             ->get();
