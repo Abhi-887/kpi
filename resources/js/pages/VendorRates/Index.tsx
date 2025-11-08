@@ -63,7 +63,9 @@ interface PageProps {
 }
 
 export default function RateCardsIndex() {
-  const { rates, filters } = usePage().props as any
+  const props = usePage().props as any
+  const rates = props.rates || { data: [], total: 0, current_page: 1, last_page: 1, per_page: 50 }
+  const filters = props.filters || {}
 
   const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -151,51 +153,57 @@ export default function RateCardsIndex() {
               {/* Mode */}
               <div className="space-y-2">
                 <label className="text-sm font-medium">Mode</label>
-                <Select value={mode} onValueChange={setMode}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="All Modes" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="">All Modes</SelectItem>
-                    <SelectItem value="AIR">Air</SelectItem>
-                    <SelectItem value="SEA">Sea</SelectItem>
-                    <SelectItem value="ROAD">Road</SelectItem>
-                    <SelectItem value="RAIL">Rail</SelectItem>
-                    <SelectItem value="MULTIMODAL">Multimodal</SelectItem>
-                  </SelectContent>
-                </Select>
+                <div className="flex gap-2">
+                  <Select value={mode} onValueChange={setMode}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="All Modes" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="AIR">Air</SelectItem>
+                      <SelectItem value="SEA">Sea</SelectItem>
+                      <SelectItem value="ROAD">Road</SelectItem>
+                      <SelectItem value="RAIL">Rail</SelectItem>
+                      <SelectItem value="MULTIMODAL">Multimodal</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {mode && <Button size="sm" variant="ghost" onClick={() => setMode('')} className="px-2">✕</Button>}
+                </div>
               </div>
 
               {/* Movement */}
               <div className="space-y-2">
                 <label className="text-sm font-medium">Movement</label>
-                <Select value={movement} onValueChange={setMovement}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="All Movements" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="">All Movements</SelectItem>
-                    <SelectItem value="IMPORT">Import</SelectItem>
-                    <SelectItem value="EXPORT">Export</SelectItem>
-                    <SelectItem value="DOMESTIC">Domestic</SelectItem>
-                    <SelectItem value="INTER_MODAL">Inter-modal</SelectItem>
-                  </SelectContent>
-                </Select>
+                <div className="flex gap-2">
+                  <Select value={movement} onValueChange={setMovement}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="All Movements" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="IMPORT">Import</SelectItem>
+                      <SelectItem value="EXPORT">Export</SelectItem>
+                      <SelectItem value="DOMESTIC">Domestic</SelectItem>
+                      <SelectItem value="INTER_MODAL">Inter-modal</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {movement && <Button size="sm" variant="ghost" onClick={() => setMovement('')} className="px-2">✕</Button>}
+                </div>
               </div>
 
               {/* Status */}
               <div className="space-y-2">
                 <label className="text-sm font-medium">Status</label>
-                <Select value={status} onValueChange={setStatus}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="All Status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="">All Status</SelectItem>
-                    <SelectItem value="active">Active</SelectItem>
-                    <SelectItem value="inactive">Inactive</SelectItem>
-                  </SelectContent>
-                </Select>
+                <div className="flex gap-2">
+                  <Select value={status} onValueChange={setStatus}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="All Status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="active">Active</SelectItem>
+                      <SelectItem value="inactive">Inactive</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {status && <Button size="sm" variant="ghost" onClick={() => setStatus('')} className="px-2">✕</Button>}
+                </div>
               </div>
 
               {/* Per Page */}

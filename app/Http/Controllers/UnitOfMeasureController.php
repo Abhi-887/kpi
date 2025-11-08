@@ -48,7 +48,11 @@ class UnitOfMeasureController extends Controller
             'category' => 'required|in:Weight,Length,Volume,Count',
         ]);
 
-        UnitOfMeasure::create($validated);
+        $unit = UnitOfMeasure::create($validated);
+
+        if ($request->expectsJson()) {
+            return response()->json(['unit' => $unit], 201);
+        }
 
         return redirect()->route('uoms.index')->with('success', 'Unit of Measure created successfully');
     }
@@ -73,12 +77,20 @@ class UnitOfMeasureController extends Controller
 
         $uom->update($validated);
 
+        if ($request->expectsJson()) {
+            return response()->json(['unit' => $uom], 200);
+        }
+
         return redirect()->route('uoms.index')->with('success', 'Unit of Measure updated successfully');
     }
 
     public function destroy(UnitOfMeasure $uom)
     {
         $uom->delete();
+
+        if (request()->expectsJson()) {
+            return response()->json([], 204);
+        }
 
         return redirect()->route('uoms.index')->with('success', 'Unit of Measure deleted successfully');
     }

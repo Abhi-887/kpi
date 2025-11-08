@@ -8,36 +8,6 @@ import { type BreadcrumbItem } from '@/types'
 import { useState } from 'react'
 import { ChevronLeft, Plus, Trash2 } from 'lucide-react'
 
-interface RateLine {
-  id?: number
-  charge_id: number
-  charge?: { id: number; name: string }
-  slab_min: number
-  slab_max: number
-  cost_rate: number
-  currency_code: string
-  is_fixed_rate: boolean
-  uom_id: number
-  uom?: { id: number; code: string }
-}
-
-interface VendorRateHeader {
-  id: number
-  vendor_id: number
-  origin_port_id: number
-  destination_port_id: number
-  mode: string
-  movement: string
-  terms: string
-  valid_from: string
-  valid_upto: string
-  is_active: boolean
-  lines: RateLine[]
-  vendor?: { id: number; name: string }
-  originPort?: { id: number; code: string; name: string }
-  destinationPort?: { id: number; code: string; name: string }
-}
-
 interface Supplier {
   id: number
   name: string
@@ -47,11 +17,14 @@ interface Location {
   id: number
   code: string
   name: string
+  type: string
 }
 
 interface Charge {
   id: number
-  name: string
+  charge_code?: string
+  charge_name?: string
+  name?: string
 }
 
 interface UnitOfMeasure {
@@ -60,24 +33,47 @@ interface UnitOfMeasure {
   name: string
 }
 
-export default function EditRateCard() {
-  const { rate, suppliers, locations, charges, uoms } = usePage().props as any
+interface PageProps {
+  suppliers: Supplier[]
+  locations: Location[]
+  charges: Charge[]
+  uoms: UnitOfMeasure[]
+  errors: Record<string, string>
+}
+
+interface RateLine {
+  charge_id: number
+  slab_min: number
+  slab_max: number
+  cost_rate: number
+  currency_code: string
+  is_fixed_rate: boolean
+  uom_id: number
+}
+
+export default function CreateRateCard() {
+  const props = usePage().props as any
+  const suppliers = props.vendors || []
+  const locations = props.locations || []
+  const charges = props.charges || []
+  const uoms = props.uoms || []
+  const errors = props.errors || {}
+  
+  const [lines, setLines] = useState<RateLine[]>([])
   const [formData, setFormData] = useState({
-    vendor_id: String(rate.vendor_id),
-    origin_port_id: String(rate.origin_port_id),
-    destination_port_id: String(rate.destination_port_id),
-    mode: rate.mode,
-    movement: rate.movement,
-    terms: rate.terms,
-    valid_from: rate.valid_from,
-    valid_upto: rate.valid_upto,
-    is_active: rate.is_active,
+    vendor_id: '',
+    origin_port_id: '',
+    destination_port_id: '',
+    mode: 'AIR',
+    movement: 'EXPORT',
+    terms: 'FOB',
+    valid_from: new Date().toISOString().split('T')[0],
+    valid_upto: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
   })
-  const [lines, setLines] = useState<RateLine[]>(rate.lines || [])
 
   const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Rate Management', href: '/vendor-rates' },
-    { title: `Edit - Rate Card`, href: `/vendor-rates/${rate.id}/edit` },
+    { title: 'Create Rate Card', href: '/vendor-rates/create' },
   ]
 
   const handleLineAdd = () => {
@@ -104,9 +100,8 @@ export default function EditRateCard() {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    router.patch(`/vendor-rates/${rate.id}`, {
+    router.post('/vendor-rates', {
       ...formData,
-      is_active: formData.is_active ? 1 : 0,
       lines: lines.map(line => ({
         ...line,
         charge_id: Number(line.charge_id),
@@ -120,11 +115,11 @@ export default function EditRateCard() {
 
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
-      <Head title="Edit Rate Card" />
+      <Head title="Create Rate Card" />
       <div className="flex h-full flex-1 flex-col gap-4 p-4">
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold">Edit Rate Card</h1>
-          <Link href="/vendor-rates">
+          <h1 className="text-2xl font-bold">Create Rate Card</h1>
+          <Link href="/rate-cards">
             <Button variant="outline">
               <ChevronLeft className="w-4 h-4 mr-2" />
               Back
@@ -145,14 +140,15 @@ export default function EditRateCard() {
                   <label className="text-sm font-medium">Vendor *</label>
                   <Select value={formData.vendor_id} onValueChange={(val) => setFormData({ ...formData, vendor_id: val })}>
                     <SelectTrigger>
-                      <SelectValue />
+                      <SelectValue placeholder="Select Vendor" />
                     </SelectTrigger>
                     <SelectContent>
-                      {suppliers.map((s: Supplier) => (
+                      {suppliers.map(s => (
                         <SelectItem key={s.id} value={String(s.id)}>{s.name}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
+                  {errors.vendor_id && <p className="text-xs text-red-600">{errors.vendor_id}</p>}
                 </div>
 
                 {/* Mode */}
@@ -214,14 +210,15 @@ export default function EditRateCard() {
                   <label className="text-sm font-medium">Origin Port *</label>
                   <Select value={formData.origin_port_id} onValueChange={(val) => setFormData({ ...formData, origin_port_id: val })}>
                     <SelectTrigger>
-                      <SelectValue />
+                      <SelectValue placeholder="Select Origin" />
                     </SelectTrigger>
                     <SelectContent>
-                      {locations.map((l: Location) => (
+                      {locations.map(l => (
                         <SelectItem key={l.id} value={String(l.id)}>{l.code} - {l.name}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
+                  {errors.origin_port_id && <p className="text-xs text-red-600">{errors.origin_port_id}</p>}
                 </div>
 
                 {/* Destination Port */}
@@ -229,14 +226,15 @@ export default function EditRateCard() {
                   <label className="text-sm font-medium">Destination Port *</label>
                   <Select value={formData.destination_port_id} onValueChange={(val) => setFormData({ ...formData, destination_port_id: val })}>
                     <SelectTrigger>
-                      <SelectValue />
+                      <SelectValue placeholder="Select Destination" />
                     </SelectTrigger>
                     <SelectContent>
-                      {locations.map((l: Location) => (
+                      {locations.map(l => (
                         <SelectItem key={l.id} value={String(l.id)}>{l.code} - {l.name}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
+                  {errors.destination_port_id && <p className="text-xs text-red-600">{errors.destination_port_id}</p>}
                 </div>
 
                 {/* Valid From */}
@@ -247,6 +245,7 @@ export default function EditRateCard() {
                     value={formData.valid_from}
                     onChange={(e) => setFormData({ ...formData, valid_from: e.target.value })}
                   />
+                  {errors.valid_from && <p className="text-xs text-red-600">{errors.valid_from}</p>}
                 </div>
 
                 {/* Valid Upto */}
@@ -257,18 +256,7 @@ export default function EditRateCard() {
                     value={formData.valid_upto}
                     onChange={(e) => setFormData({ ...formData, valid_upto: e.target.value })}
                   />
-                </div>
-
-                {/* Active Status */}
-                <div className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    id="is_active"
-                    checked={formData.is_active}
-                    onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
-                    className="w-4 h-4 rounded"
-                  />
-                  <label htmlFor="is_active" className="text-sm font-medium">Active</label>
+                  {errors.valid_upto && <p className="text-xs text-red-600">{errors.valid_upto}</p>}
                 </div>
               </div>
             </CardContent>
@@ -285,7 +273,7 @@ export default function EditRateCard() {
             </CardHeader>
             <CardContent>
               {lines.length === 0 ? (
-                <p className="text-sm text-gray-500 text-center py-4">No rate lines. Click "Add Line" to start.</p>
+                <p className="text-sm text-gray-500 text-center py-4">No rate lines added. Click "Add Line" to start.</p>
               ) : (
                 <div className="space-y-3 overflow-x-auto">
                   <div className="min-w-full inline-block">
@@ -312,8 +300,8 @@ export default function EditRateCard() {
                                 className="w-full px-2 py-1 border rounded text-sm"
                               >
                                 <option value="">Select Charge</option>
-                                {charges.map((c: Charge) => (
-                                  <option key={c.id} value={c.id}>{c.name}</option>
+                                {charges.map(c => (
+                                  <option key={c.id} value={c.id}>{c.charge_name || c.name || 'N/A'}</option>
                                 ))}
                               </select>
                             </td>
@@ -324,8 +312,8 @@ export default function EditRateCard() {
                                 className="w-full px-2 py-1 border rounded text-sm"
                               >
                                 <option value="">Select UOM</option>
-                                {uoms.map((u: UnitOfMeasure) => (
-                                  <option key={u.id} value={u.id}>{u.code}</option>
+                                {uoms.map(u => (
+                                  <option key={u.id} value={u.id}>{u.symbol} - {u.name}</option>
                                 ))}
                               </select>
                             </td>
@@ -399,7 +387,7 @@ export default function EditRateCard() {
           {/* Buttons */}
           <div className="flex gap-2">
             <Button type="submit" variant="default">
-              Update Rate Card
+              Create Rate Card
             </Button>
             <Link href="/vendor-rates">
               <Button type="button" variant="outline">

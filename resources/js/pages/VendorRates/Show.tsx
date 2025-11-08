@@ -39,18 +39,18 @@ interface RateCard {
 }
 
 const modeColors: Record<string, string> = {
-  AIR: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-200',
-  SEA: 'bg-cyan-100 text-cyan-800 dark:bg-cyan-900/30 dark:text-cyan-200',
-  ROAD: 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-200',
-  RAIL: 'bg-slate-100 text-slate-800 dark:bg-slate-900/30 dark:text-slate-200',
-  MULTIMODAL: 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-200',
+  AIR: 'bg-blue-100 text-blue-800 dark:bg-blue-600 dark:text-blue-50',
+  SEA: 'bg-cyan-100 text-cyan-800 dark:bg-cyan-600 dark:text-cyan-50',
+  ROAD: 'bg-amber-100 text-amber-800 dark:bg-amber-600 dark:text-amber-50',
+  RAIL: 'bg-slate-100 text-slate-800 dark:bg-slate-600 dark:text-slate-50',
+  MULTIMODAL: 'bg-purple-100 text-purple-800 dark:bg-purple-600 dark:text-purple-50',
 }
 
 const movementColors: Record<string, string> = {
-  IMPORT: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-200',
-  EXPORT: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-200',
-  DOMESTIC: 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-200',
-  INTER_MODAL: 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-200',
+  IMPORT: 'bg-red-100 text-red-800 dark:bg-red-600 dark:text-red-50',
+  EXPORT: 'bg-green-100 text-green-800 dark:bg-green-600 dark:text-green-50',
+  DOMESTIC: 'bg-orange-100 text-orange-800 dark:bg-orange-600 dark:text-orange-50',
+  INTER_MODAL: 'bg-indigo-100 text-indigo-800 dark:bg-indigo-600 dark:text-indigo-50',
 }
 
 export default function ShowRateCard() {
@@ -81,13 +81,13 @@ export default function ShowRateCard() {
             </p>
           </div>
           <div className="flex gap-2">
-            <Link href={`/rate-cards/${rateHeader.id}/edit`}>
+            <Link href={`/vendor-rates/${rate.id}/edit`}>
               <Button variant="default">
                 <Edit2 className="w-4 h-4 mr-2" />
                 Edit
               </Button>
             </Link>
-            <Link href="/rate-cards">
+            <Link href="/vendor-rates">
               <Button variant="outline">
                 <ChevronLeft className="w-4 h-4 mr-2" />
                 Back
@@ -141,7 +141,7 @@ export default function ShowRateCard() {
                   <Badge variant={rate.is_active ? 'default' : 'secondary'}>
                     {rate.is_active ? 'Active' : 'Inactive'}
                   </Badge>
-                  {isValidNow && <Badge className="bg-green-100 text-green-800 dark:bg-green-900/30">Currently Valid</Badge>}
+                  {isValidNow && <Badge className="bg-green-100 text-green-800 dark:bg-green-600 dark:text-green-50">Currently Valid</Badge>}
                 </div>
               </div>
             </div>
