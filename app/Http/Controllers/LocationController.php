@@ -14,6 +14,7 @@ class LocationController extends Controller
 
         return Inertia::render('Ports/Index', [
             'ports' => $ports,
+            'csrf_token' => csrf_token(),
         ]);
     }
 
@@ -92,6 +93,7 @@ class LocationController extends Controller
 
                 if ($exists) {
                     $skipped++;
+
                     continue;
                 }
 
@@ -106,7 +108,7 @@ class LocationController extends Controller
 
                 $imported++;
             } catch (\Exception $e) {
-                $errors[] = "Row " . ($index + 1) . ": {$e->getMessage()}";
+                $errors[] = 'Row '.($index + 1).": {$e->getMessage()}";
             }
         }
 

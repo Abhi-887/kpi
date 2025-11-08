@@ -7,6 +7,7 @@ use App\Http\Controllers\CostComponentController;
 use App\Http\Controllers\CourierPriceController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ExchangeRateController;
 use App\Http\Controllers\ForwardingPriceController;
 use App\Http\Controllers\IntegrationController;
 use App\Http\Controllers\InvoiceController;
@@ -48,6 +49,21 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('suppliers', SupplierController::class);
     Route::resource('cost-components', CostComponentController::class);
     Route::resource('price-lists', PriceListController::class);
+
+    // Exchange Rates Management
+    Route::prefix('exchange-rates')->group(function () {
+        Route::get('', [ExchangeRateController::class, 'index'])->name('exchange-rates.index');
+        Route::get('create', [ExchangeRateController::class, 'create'])->name('exchange-rates.create');
+        Route::post('', [ExchangeRateController::class, 'store'])->name('exchange-rates.store');
+        Route::get('history/{fromCurrency}/{toCurrency}', [ExchangeRateController::class, 'history'])->name('exchange-rates.history');
+        Route::delete('{exchangeRate}', [ExchangeRateController::class, 'destroy'])->name('exchange-rates.destroy');
+
+        // API endpoints
+        Route::get('api/show', [ExchangeRateController::class, 'show'])->name('exchange-rates.show');
+        Route::get('api/rates', [ExchangeRateController::class, 'getRates'])->name('exchange-rates.rates');
+        Route::post('api/convert', [ExchangeRateController::class, 'convert'])->name('exchange-rates.convert');
+        Route::post('api/destroy-pair', [ExchangeRateController::class, 'destroyPair'])->name('exchange-rates.destroy-pair');
+    });
 
     // Shipments routes
     Route::get('shipments', [ShipmentController::class, 'index'])->name('shipments.index');

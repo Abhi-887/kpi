@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('name')->comment('Full name of the location');
             $table->string('city')->nullable();
             $table->string('country')->comment('Country code or full name');
-            $table->enum('type', ['port', 'airport', 'distribution_center', 'warehouse', 'other'])->default('port');
+            $table->enum('type', ['AIR', 'SEA', 'port', 'airport', 'distribution_center', 'warehouse', 'other'])->default('AIR');
             $table->text('description')->nullable();
             $table->boolean('is_active')->default(true);
             $table->timestamps();

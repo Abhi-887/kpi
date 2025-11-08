@@ -313,7 +313,7 @@ export default function CreateRateCard() {
                               >
                                 <option value="">Select UOM</option>
                                 {uoms.map(u => (
-                                  <option key={u.id} value={u.id}>{u.code}</option>
+                                  <option key={u.id} value={u.id}>{u.symbol} - {u.name}</option>
                                 ))}
                               </select>
                             </td>
