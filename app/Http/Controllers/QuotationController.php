@@ -149,13 +149,15 @@ class QuotationController extends Controller
         // Calculate totals
         $this->dimensionService->calculateTotals($quotation);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Quotation created successfully',
-            'quotation_id' => $quotation->id,
-            'quote_id' => $quoteId,
-            'redirect' => route('quotations.show', $quotation),
-        ]);
+        return redirect()
+            ->route('quotations.show', $quotation)
+            ->with([
+                'alert' => [
+                    'type' => 'success',
+                    'title' => 'Quotation Created',
+                    'message' => 'Quotation '.$quoteId.' created successfully',
+                ],
+            ]);
     }
 
     /**
