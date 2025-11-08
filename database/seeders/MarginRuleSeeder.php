@@ -24,6 +24,13 @@ class MarginRuleSeeder extends Seeder
         $charges = Charge::where('is_active', true)->get();
         $customers = Customer::limit(5)->get();
 
+        // Only create if we have data to work with
+        if ($charges->isEmpty()) {
+            echo "⚠️  No active charges found. Create charges first.\n";
+
+            return;
+        }
+
         // Level 1: Global Default Margins (Precedence 1)
         // These apply to ALL charges for ALL customers
         MarginRule::create([
@@ -48,7 +55,7 @@ class MarginRuleSeeder extends Seeder
                     'margin_percentage' => 0.10,  // 10% for premium customer
                     'margin_fixed_inr' => 0,
                     'is_active' => true,
-                    'notes' => "Special margin for {$premiumCustomer->name}: 10% (volume discount)",
+                    'notes' => "Special margin for {$premiumCustomer->company_name}: 10% (volume discount)",
                 ]);
             }
 
@@ -62,20 +69,16 @@ class MarginRuleSeeder extends Seeder
                     'margin_percentage' => 0.15,  // 15% for regular customer
                     'margin_fixed_inr' => 0,
                     'is_active' => true,
-                    'notes' => "Special margin for {$regularCustomer->name}: 15% (regular customer)",
+                    'notes' => "Special margin for {$regularCustomer->company_name}: 15% (regular customer)",
                 ]);
             }
         }
 
         // Level 3: Charge-Specific Margins (Precedence 3)
         // High-value charges get higher markup
-        if ($charges->isNotEmpty()) {
-            // High margin charges (premium services like FUEL, THC, HAZMAT)
-            $premiumCharges = $charges->filter(function ($charge) {
-                return in_array($charge->code, ['FUEL', 'THC', 'HAZMAT', 'INSURANCE']);
-            });
-
-            foreach ($premiumCharges as $charge) {
+        foreach ($charges as $charge) {
+            // High margin charges (premium services like FUEL, THC, HAZMAT, INSURANCE)
+            if (in_array($charge->code, ['FUEL', 'THC', 'HAZMAT', 'INSURANCE'])) {
                 MarginRule::create([
                     'precedence' => 3,
                     'charge_id' => $charge->id,
@@ -85,14 +88,8 @@ class MarginRuleSeeder extends Seeder
                     'is_active' => true,
                     'notes' => "{$charge->name}: 25% + 100 Rs (premium charge)",
                 ]);
-            }
-
-            // Standard charges get standard margin
-            $standardCharges = $charges->filter(function ($charge) {
-                return in_array($charge->code, ['BASIC', 'DOC', 'BL', 'HAND']);
-            });
-
-            foreach ($standardCharges as $charge) {
+            } elseif (in_array($charge->code, ['BASIC', 'DOC', 'BL', 'HAND', 'PICKUP', 'DELIVERY', 'ADDR'])) {
+                // Standard charges get standard margin
                 MarginRule::create([
                     'precedence' => 3,
                     'charge_id' => $charge->id,
@@ -101,6 +98,17 @@ class MarginRuleSeeder extends Seeder
                     'margin_fixed_inr' => 0,
                     'is_active' => true,
                     'notes' => "{$charge->name}: 20% standard margin",
+                ]);
+            } else {
+                // Other charges get default margin
+                MarginRule::create([
+                    'precedence' => 3,
+                    'charge_id' => $charge->id,
+                    'customer_id' => null,
+                    'margin_percentage' => 0.18,  // 18% for other charges
+                    'margin_fixed_inr' => 0,
+                    'is_active' => true,
+                    'notes' => "{$charge->name}: 18% default margin",
                 ]);
             }
         }
@@ -121,7 +129,7 @@ class MarginRuleSeeder extends Seeder
                     'margin_percentage' => 0.08,  // 8% for this specific combo
                     'margin_fixed_inr' => 0,
                     'is_active' => true,
-                    'notes' => "Deal: {$premiumCustomer->name} + {$basicCharge->name} = 8% margin",
+                    'notes' => "Deal: {$premiumCustomer->company_name} + {$basicCharge->name} = 8% margin",
                 ]);
             }
 
@@ -134,7 +142,7 @@ class MarginRuleSeeder extends Seeder
                     'margin_percentage' => 0.15,  // 15% for this combo
                     'margin_fixed_inr' => 50,    // Plus 50 Rs fixed
                     'is_active' => true,
-                    'notes' => "Deal: {$premiumCustomer->name} + {$fuelCharge->name} = 15% + 50 Rs",
+                    'notes' => "Deal: {$premiumCustomer->company_name} + {$fuelCharge->name} = 15% + 50 Rs",
                 ]);
             }
         }

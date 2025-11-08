@@ -18,8 +18,8 @@ interface MarginRule {
 
 interface Charge {
     id: number;
-    code: string;
-    name: string;
+    charge_code: string;
+    charge_name: string;
     is_active: boolean;
 }
 
@@ -66,7 +66,7 @@ export default function MarginEngineIndex() {
     const [success, setSuccess] = useState('');
     const [error, setError] = useState('');
     const [showAddForm, setShowAddForm] = useState(false);
-    const [selectedTab, setSelectedTab] = useState<'manage' | 'reference'>('manage');
+    const [selectedTab, setSelectedTab] = useState<'manage' | 'reference' | 'test'>('manage');
     const [testCost, setTestCost] = useState(1000);
     const [testChargeId, setTestChargeId] = useState<number | null>(null);
     const [testCustomerId, setTestCustomerId] = useState<number | null>(null);
@@ -166,7 +166,8 @@ export default function MarginEngineIndex() {
         <>
             <Head title="Margin Engine" />
             <AppLayout>
-                <div className="space-y-6">
+                <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
+                    <div className="space-y-6">
                     {/* Header */}
                     <div className="flex justify-between items-center">
                         <div>
@@ -261,7 +262,7 @@ export default function MarginEngineIndex() {
                                                     <option value="">All Charges</option>
                                                     {charges.map((c) => (
                                                         <option key={c.id} value={c.id}>
-                                                            {c.code} - {c.name}
+                                                            {c.charge_code} - {c.charge_name}
                                                         </option>
                                                     ))}
                                                 </select>
@@ -361,7 +362,7 @@ export default function MarginEngineIndex() {
                                                         )}
                                                     </div>
                                                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                                                        {(rule.margin_percentage * 100).toFixed(2)}% + ₹{rule.margin_fixed_inr.toFixed(2)}
+                                                        {(Number(rule.margin_percentage) * 100).toFixed(2)}% + ₹{Number(rule.margin_fixed_inr).toFixed(2)}
                                                     </p>
                                                     {rule.notes && (
                                                         <p className="text-xs text-gray-500 dark:text-gray-500 italic mt-1">{rule.notes}</p>
@@ -398,7 +399,7 @@ export default function MarginEngineIndex() {
                                         ) : (
                                             groupedBySpecificity.specific.map((r) => (
                                                 <div key={r.id} className="text-sm text-red-800 dark:text-red-100">
-                                                    {r.charge?.name} + {r.customer?.company_name}: {(r.margin_percentage * 100).toFixed(1)}% + ₹{r.margin_fixed_inr.toFixed(2)}
+                                                    {r.charge?.name} + {r.customer?.company_name}: {(Number(r.margin_percentage) * 100).toFixed(1)}% + ₹{Number(r.margin_fixed_inr).toFixed(2)}
                                                 </div>
                                             ))
                                         )}
@@ -417,7 +418,7 @@ export default function MarginEngineIndex() {
                                         ) : (
                                             groupedBySpecificity.charge_only.map((r) => (
                                                 <div key={r.id} className="text-sm text-blue-800 dark:text-blue-100">
-                                                    {r.charge?.name}: {(r.margin_percentage * 100).toFixed(1)}% + ₹{r.margin_fixed_inr.toFixed(2)}
+                                                    {r.charge?.name}: {(Number(r.margin_percentage) * 100).toFixed(1)}% + ₹{Number(r.margin_fixed_inr).toFixed(2)}
                                                 </div>
                                             ))
                                         )}
@@ -436,7 +437,7 @@ export default function MarginEngineIndex() {
                                         ) : (
                                             groupedBySpecificity.customer_only.map((r) => (
                                                 <div key={r.id} className="text-sm text-purple-800 dark:text-purple-100">
-                                                    {r.customer?.company_name}: {(r.margin_percentage * 100).toFixed(1)}% + ₹{r.margin_fixed_inr.toFixed(2)}
+                                                    {r.customer?.company_name}: {(Number(r.margin_percentage) * 100).toFixed(1)}% + ₹{Number(r.margin_fixed_inr).toFixed(2)}
                                                 </div>
                                             ))
                                         )}
@@ -455,7 +456,7 @@ export default function MarginEngineIndex() {
                                         ) : (
                                             groupedBySpecificity.global.map((r) => (
                                                 <div key={r.id} className="text-sm text-green-800 dark:text-green-100">
-                                                    Applies to all: {(r.margin_percentage * 100).toFixed(1)}% + ₹{r.margin_fixed_inr.toFixed(2)}
+                                                    Applies to all: {(Number(r.margin_percentage) * 100).toFixed(1)}% + ₹{Number(r.margin_fixed_inr).toFixed(2)}
                                                 </div>
                                             ))
                                         )}
@@ -489,7 +490,7 @@ export default function MarginEngineIndex() {
                                         <option value="">Global Rule</option>
                                         {charges.map((c) => (
                                             <option key={c.id} value={c.id}>
-                                                {c.code}
+                                                {c.charge_code}
                                             </option>
                                         ))}
                                     </select>
@@ -551,6 +552,7 @@ export default function MarginEngineIndex() {
                             )}
                         </div>
                     )}
+                    </div>
                 </div>
             </AppLayout>
         </>

@@ -27,11 +27,10 @@ class MarginRuleController extends Controller
                 ->get(),
             'charges' => Charge::query()
                 ->where('is_active', true)
-                ->orderBy('name')
+                ->orderBy('charge_code')
                 ->get(),
             'customers' => Customer::query()
-                ->where('is_active', true)
-                ->orderBy('name')
+                ->orderBy('company_name')
                 ->get(),
         ]);
     }
