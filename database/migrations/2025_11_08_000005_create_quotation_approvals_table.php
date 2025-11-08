@@ -13,11 +13,9 @@ return new class extends Migration
     {
         Schema::create('quotation_approvals', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('quotation_header_id')->constrained('quotation_headers')->cascadeOnDelete();
-
-            // Who submitted and who approves
-            $table->foreignId('submitted_by_user_id')->constrained('users')->cascadeOnDelete();
-            $table->foreignId('approver_user_id')->nullable()->constrained('users')->nullOnDelete();
+            $table->unsignedBigInteger('quotation_header_id');
+            $table->unsignedBigInteger('submitted_by_user_id');
+            $table->unsignedBigInteger('approver_user_id')->nullable();
 
             // Approval status
             $table->enum('approval_status', ['pending', 'approved', 'rejected'])->default('pending')->index();
@@ -43,6 +41,20 @@ return new class extends Migration
             $table->index('submitted_by_user_id');
             $table->index('approver_user_id');
         });
+
+        // Add foreign keys
+        if (Schema::hasTable('quotation_headers')) {
+            Schema::table('quotation_approvals', function (Blueprint $table) {
+                $table->foreign('quotation_header_id')->references('id')->on('quotation_headers')->cascadeOnDelete();
+            });
+        }
+
+        if (Schema::hasTable('users')) {
+            Schema::table('quotation_approvals', function (Blueprint $table) {
+                $table->foreign('submitted_by_user_id')->references('id')->on('users')->cascadeOnDelete();
+                $table->foreign('approver_user_id')->references('id')->on('users')->nullOnDelete();
+            });
+        }
     }
 
     /**

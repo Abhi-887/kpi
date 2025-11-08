@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('quotation_dimensions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('quotation_header_id')->constrained('quotation_headers')->cascadeOnDelete();
+            $table->unsignedBigInteger('quotation_header_id');
 
             // Dimensions in centimeters
             $table->decimal('length_cm', 10, 2);
@@ -33,6 +33,13 @@ return new class extends Migration
 
             $table->index('quotation_header_id');
         });
+
+        // Add foreign key
+        if (Schema::hasTable('quotation_headers')) {
+            Schema::table('quotation_dimensions', function (Blueprint $table) {
+                $table->foreign('quotation_header_id')->references('id')->on('quotation_headers')->cascadeOnDelete();
+            });
+        }
     }
 
     /**

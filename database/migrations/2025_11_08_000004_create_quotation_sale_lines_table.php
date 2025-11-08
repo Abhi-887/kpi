@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('quotation_sale_lines', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('quotation_header_id')->constrained('quotation_headers')->cascadeOnDelete();
-            $table->foreignId('charge_id')->constrained()->cascadeOnDelete();
+            $table->unsignedBigInteger('quotation_header_id');
+            $table->unsignedBigInteger('charge_id');
 
             // Display name on PDF/Invoice
             $table->string('display_name'); // e.g., "Air Freight Charges"
@@ -43,6 +43,14 @@ return new class extends Migration
             $table->index('quotation_header_id');
             $table->index('charge_id');
         });
+
+        // Add foreign keys
+        if (Schema::hasTable('quotation_headers') && Schema::hasTable('charges')) {
+            Schema::table('quotation_sale_lines', function (Blueprint $table) {
+                $table->foreign('quotation_header_id')->references('id')->on('quotation_headers')->cascadeOnDelete();
+                $table->foreign('charge_id')->references('id')->on('charges')->cascadeOnDelete();
+            });
+        }
     }
 
     /**

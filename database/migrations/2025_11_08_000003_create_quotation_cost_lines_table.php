@@ -13,15 +13,15 @@ return new class extends Migration
     {
         Schema::create('quotation_cost_lines', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('quotation_header_id')->constrained('quotation_headers')->cascadeOnDelete();
-            $table->foreignId('charge_id')->constrained()->cascadeOnDelete();
+            $table->unsignedBigInteger('quotation_header_id');
+            $table->unsignedBigInteger('charge_id');
 
             // All vendor costs stored as JSON for audit trail
             // e.g., {'vendor_1': 120.00, 'vendor_2': 125.00, 'vendor_3': 118.00}
             $table->json('all_vendor_costs')->nullable();
 
-            // Selected vendor
-            $table->foreignId('selected_vendor_id')->nullable()->constrained('vendors')->nullOnDelete();
+            // Selected vendor (using unsignedBigInteger to avoid circular deps)
+            $table->unsignedBigInteger('selected_vendor_id')->nullable();
 
             // Unit Cost
             $table->decimal('unit_cost_rate', 12, 2)->default(0);
@@ -39,6 +39,14 @@ return new class extends Migration
             $table->index('charge_id');
             $table->index('selected_vendor_id');
         });
+
+        // Add foreign keys
+        if (Schema::hasTable('quotation_headers') && Schema::hasTable('charges')) {
+            Schema::table('quotation_cost_lines', function (Blueprint $table) {
+                $table->foreign('quotation_header_id')->references('id')->on('quotation_headers')->cascadeOnDelete();
+                $table->foreign('charge_id')->references('id')->on('charges')->cascadeOnDelete();
+            });
+        }
     }
 
     /**
