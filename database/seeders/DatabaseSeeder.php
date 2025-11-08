@@ -45,5 +45,8 @@ class DatabaseSeeder extends Seeder
         // Seed customers and orders
         $this->call(CustomerSeeder::class);
         $this->call(OrderSeeder::class);
+
+        // Seed margin rules (Margin Engine)
+        $this->call(MarginRuleSeeder::class);
     }
 }

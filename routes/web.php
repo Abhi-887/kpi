@@ -4,6 +4,7 @@ use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\ChargeController;
 use App\Http\Controllers\ChargeRuleController;
 use App\Http\Controllers\ContainerTypeController;
+use App\Http\Controllers\MarginRuleController;
 use App\Http\Controllers\CostComponentController;
 use App\Http\Controllers\CourierPriceController;
 use App\Http\Controllers\CustomerController;
@@ -102,6 +103,21 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('applicable-charges', [ChargeRuleController::class, 'getApplicableCharges'])->name('charge-applicability.applicable-charges');
         Route::post('applicable-charge-ids', [ChargeRuleController::class, 'getApplicableChargeIds'])->name('charge-applicability.applicable-charge-ids');
         Route::post('validate-rules', [ChargeRuleController::class, 'validateRules'])->name('charge-applicability.validate-rules');
+    });
+
+    // Margin Engine (Margin Rules Management)
+    Route::prefix('margin-engine')->group(function () {
+        Route::get('', [MarginRuleController::class, 'index'])->name('margin-engine.index');
+
+        // API endpoints for Margin Engine
+        Route::post('get-rules', [MarginRuleController::class, 'getRulesForCombination'])->name('margin-engine.get-rules');
+        Route::post('calculate-price', [MarginRuleController::class, 'calculateSalePrice'])->name('margin-engine.calculate-price');
+        Route::post('add-rule', [MarginRuleController::class, 'addMarginRule'])->name('margin-engine.add-rule');
+        Route::patch('{marginRule}', [MarginRuleController::class, 'updateMarginRule'])->name('margin-engine.update-rule');
+        Route::post('remove-rule', [MarginRuleController::class, 'removeMarginRule'])->name('margin-engine.remove-rule');
+        Route::get('list-rules', [MarginRuleController::class, 'listAllRules'])->name('margin-engine.list-rules');
+        Route::post('validate-rules', [MarginRuleController::class, 'validateRules'])->name('margin-engine.validate-rules');
+        Route::post('calculate-bulk', [MarginRuleController::class, 'calculateBulkPrices'])->name('margin-engine.calculate-bulk');
     });
 
     // Quotes routes
