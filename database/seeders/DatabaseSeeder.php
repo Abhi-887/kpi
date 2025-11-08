@@ -58,12 +58,12 @@ class DatabaseSeeder extends Seeder
 
         // Seed pricing and rate cards
         $this->call(PaymentTermSeeder::class);
-        $this->call(RateCardSeeder::class);
+        // $this->call(RateCardSeeder::class); // Skip factory-based seeder
 
         // Seed quotations with all related data
         $this->call(QuotationSeeder::class);
 
         // Seed invoices
-        $this->call(InvoiceSeeder::class);
+        // $this->call(InvoiceSeeder::class); // Skip factory-based seeder
     }
 }

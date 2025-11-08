@@ -233,11 +233,11 @@ export default function Index({ quotations, filters }: IndexProps) {
                         </td>
                         <td className="px-6 py-3 text-center text-sm">
                           <p className="font-mono text-xs">
-                            {quotation.total_chargeable_weight.toFixed(2)} kg • {quotation.total_cbm.toFixed(4)} CBM
+                            {Number(quotation.total_chargeable_weight).toFixed(2)} kg • {Number(quotation.total_cbm).toFixed(4)} CBM
                           </p>
                         </td>
                         <td className="px-6 py-3">
-                          <Badge className={statusColors[quotation.quote_status] || statusColors.Draft}>
+                          <Badge className={statusColors[quotation.quote_status] || 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400'}>
                             {quotation.quote_status}
                           </Badge>
                         </td>
@@ -251,7 +251,7 @@ export default function Index({ quotations, filters }: IndexProps) {
                                 <Eye className="h-4 w-4" />
                               </Button>
                             </Link>
-                            {quotation.quote_status === 'Draft' && (
+                            {quotation.quote_status === 'draft' && (
                               <>
                                 <Button
                                   size="sm"

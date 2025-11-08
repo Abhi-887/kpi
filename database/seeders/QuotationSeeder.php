@@ -24,7 +24,9 @@ class QuotationSeeder extends Seeder
         $modes = ['AIR', 'SEA', 'ROAD', 'RAIL'];
         $movements = ['IMPORT', 'EXPORT', 'DOMESTIC'];
         $terms = ['FOB', 'CIF', 'EXW', 'DDP'];
-        $statuses = ['Draft', 'Pending Costing', 'Pending Approval', 'Sent', 'Won', 'Lost', 'Cancelled'];
+        $statuses = ['draft', 'pending_costing', 'pending_approval', 'sent', 'won', 'lost', 'cancelled'];
+
+        $quoteCounter = 1;
 
         foreach ($customers as $customer) {
             // Create 2-4 quotations per customer
@@ -34,6 +36,7 @@ class QuotationSeeder extends Seeder
                 $createdBy = $users->random();
 
                 $quotation = QuotationHeader::create([
+                    'quote_id' => 'Q-'.date('Ymd').'-'.str_pad($quoteCounter++, 4, '0', STR_PAD_LEFT),
                     'customer_id' => $customer->id,
                     'mode' => $mode,
                     'movement' => $movements[array_rand($movements)],
@@ -53,13 +56,26 @@ class QuotationSeeder extends Seeder
 
                 // Add dimensions
                 for ($j = 0; $j < rand(1, 5); $j++) {
+                    $length = fake()->randomFloat(2, 10, 300);
+                    $width = fake()->randomFloat(2, 10, 300);
+                    $height = fake()->randomFloat(2, 10, 300);
+                    $pieces = fake()->numberBetween(1, 100);
+                    $weightPerPiece = fake()->randomFloat(2, 0.5, 500);
+
+                    $totalActualWeight = $pieces * $weightPerPiece;
+                    $volumeCbm = (($length * $width * $height) / 1_000_000) * $pieces;
+                    $volumetricWeight = $volumeCbm * 166.67;
+
                     QuotationDimension::create([
                         'quotation_header_id' => $quotation->id,
-                        'length_cm' => fake()->randomFloat(2, 10, 300),
-                        'width_cm' => fake()->randomFloat(2, 10, 300),
-                        'height_cm' => fake()->randomFloat(2, 10, 300),
-                        'pieces' => fake()->numberBetween(1, 100),
-                        'actual_weight_per_piece_kg' => fake()->randomFloat(2, 0.5, 500),
+                        'length_cm' => $length,
+                        'width_cm' => $width,
+                        'height_cm' => $height,
+                        'pieces' => $pieces,
+                        'actual_weight_per_piece_kg' => $weightPerPiece,
+                        'total_actual_weight_kg' => $totalActualWeight,
+                        'volume_cbm' => $volumeCbm,
+                        'volumetric_weight_kg' => $volumetricWeight,
                     ]);
                 }
             }
