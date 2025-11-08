@@ -29,6 +29,9 @@ class DatabaseSeeder extends Seeder
         // Assign Admin role to test user
         $user->assignRole('admin');
 
+        // Create additional users
+        $this->call(UserSeeder::class);
+
         // Seed master data (Phase 1)
         $this->call(UnitOfMeasureSeeder::class);
         $this->call(TaxCodeSeeder::class);
@@ -39,6 +42,10 @@ class DatabaseSeeder extends Seeder
         $this->call(CostComponentSeeder::class);
         $this->call(PriceListSeeder::class);
 
+        // Seed locations and container types
+        $this->call(LocationSeeder::class);
+        $this->call(ContainerTypeSeeder::class);
+
         // Seed shipments
         $this->call(ShipmentSeeder::class);
 
@@ -48,5 +55,15 @@ class DatabaseSeeder extends Seeder
 
         // Seed margin rules (Margin Engine)
         $this->call(MarginRuleSeeder::class);
+
+        // Seed pricing and rate cards
+        $this->call(PaymentTermSeeder::class);
+        $this->call(RateCardSeeder::class);
+
+        // Seed quotations with all related data
+        $this->call(QuotationSeeder::class);
+
+        // Seed invoices
+        $this->call(InvoiceSeeder::class);
     }
 }
