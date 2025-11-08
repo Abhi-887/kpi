@@ -34,7 +34,15 @@ interface IndexProps {
   quotations: {
     data: Quotation[]
     links: PaginationLink[]
-    meta: any
+    meta?: {
+      last_page: number
+      current_page: number
+    }
+    path?: string
+    per_page?: number
+    total?: number
+    last_page?: number
+    current_page?: number
   }
   filters: any
 }
@@ -58,10 +66,10 @@ const modeColors: Record<string, string> = {
 
 export default function Index({ quotations, filters }: IndexProps) {
   const breadcrumbs: BreadcrumbItem[] = [{ title: 'Quotations', href: '/quotations' }]
-  const [search, setSearch] = useState(filters.search || '')
-  const [status, setStatus] = useState(filters.quote_status || '')
-  const [mode, setMode] = useState(filters.mode || '')
-  const [movement, setMovement] = useState(filters.movement || '')
+  const [search, setSearch] = useState(filters?.search || '')
+  const [status, setStatus] = useState(filters?.quote_status || '')
+  const [mode, setMode] = useState(filters?.mode || '')
+  const [movement, setMovement] = useState(filters?.movement || '')
 
   const handleFilter = () => {
     router.get('/quotations', {
@@ -69,7 +77,7 @@ export default function Index({ quotations, filters }: IndexProps) {
       quote_status: status,
       mode,
       movement,
-      per_page: filters.per_page || 20,
+      per_page: filters?.per_page || 20,
     })
   }
 
@@ -275,9 +283,9 @@ export default function Index({ quotations, filters }: IndexProps) {
         </Card>
 
         {/* Pagination */}
-        {quotations.meta.last_page > 1 && (
+        {(quotations.meta?.last_page ?? quotations.last_page ?? 1) > 1 && (
           <div className="flex justify-center gap-2">
-            {quotations.links.map((link, idx) => (
+            {quotations.links?.map((link, idx) => (
               <Button
                 key={idx}
                 variant={link.active ? 'default' : 'outline'}
