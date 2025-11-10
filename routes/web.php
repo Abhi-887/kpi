@@ -23,7 +23,6 @@ use App\Http\Controllers\PriceComparisonController;
 use App\Http\Controllers\PriceListController;
 use App\Http\Controllers\QuotationApprovalController;
 use App\Http\Controllers\QuotationController;
-use App\Http\Controllers\QuoteController;
 use App\Http\Controllers\RateCardController;
 use App\Http\Controllers\ShipmentController;
 use App\Http\Controllers\SupplierController;
@@ -78,8 +77,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Rate Cards routes
     Route::resource('rate-cards', RateCardController::class);
-
-    // Vendor Rates Management (Rate Engine)
     Route::prefix('vendor-rates')->group(function () {
         Route::get('', [VendorRateController::class, 'index'])->name('vendor-rates.index');
         Route::get('create', [VendorRateController::class, 'create'])->name('vendor-rates.create');
@@ -123,9 +120,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('validate-rules', [MarginRuleController::class, 'validateRules'])->name('margin-engine.validate-rules');
         Route::post('calculate-bulk', [MarginRuleController::class, 'calculateBulkPrices'])->name('margin-engine.calculate-bulk');
     });
-
-    // Quotes routes
-    Route::resource('quotes', QuoteController::class);
 
     // Quotation Module Routes (19-23)
     Route::resource('quotations', QuotationController::class);

@@ -76,7 +76,6 @@ const navGroups: NavGroup[] = [
             { title: 'Orders', href: '/orders', icon: ShoppingCart },
             { title: 'Shipments', href: '/shipments', icon: Package },
             { title: 'Invoices', href: '/invoices', icon: Receipt },
-            { title: 'Quotes', href: '/quotes', icon: FileText },
         ],
     },
     {
