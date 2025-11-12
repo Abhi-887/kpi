@@ -1,11 +1,15 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "laravel/react-starter-kit",
+    "name": "osm/logistics-platform",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
+    "description": "OSM - Order Supply Management Logistics Platform. A comprehensive logistics and supply chain management system for quotations, pricing, and order management.",
     "keywords": [
         "laravel",
-        "framework"
+        "logistics",
+        "supply-chain",
+        "quotation",
+        "pricing",
+        "osm"
     ],
     "license": "MIT",
     "require": {
