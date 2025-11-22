@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 
 export default function AppLogo() {
     const appName = useMemo(() => {
-        return (import.meta.env.VITE_APP_NAME as string) || 'KPI';
+        return (import.meta.env.VITE_APP_NAME as string) || 'Shipmate';
     }, []);
     return (
         <>

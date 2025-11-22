@@ -1,15 +1,15 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "osm/logistics-platform",
+    "name": "shipmate/logistics-platform",
     "type": "project",
-    "description": "OSM - Order Supply Management Logistics Platform. A comprehensive logistics and supply chain management system for quotations, pricing, and order management.",
+    "description": "Shipmate - A comprehensive logistics and supply chain management system for quotations, pricing, and order management.",
     "keywords": [
         "laravel",
         "logistics",
         "supply-chain",
         "quotation",
         "pricing",
-        "osm"
+        "shipmate"
     ],
     "license": "MIT",
     "require": {

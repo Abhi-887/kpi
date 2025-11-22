@@ -1,6 +1,6 @@
 {
     "$schema": "https://json.schemastore.org/package.json",
-    "name": "osm-logistics-platform",
+    "name": "shipmate",
     "private": true,
     "type": "module",
     "scripts": {
