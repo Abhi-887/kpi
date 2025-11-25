@@ -12,77 +12,11 @@ import {
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
-import { Link, usePage } from '@inertiajs/react';
+import { Link } from '@inertiajs/react';
 import { BookOpen, Folder, LayoutGrid, Package, DollarSign, FileText, Users, ShoppingCart, Receipt, Bell, Zap, Settings, History, TrendingUp, Layers, Database, Tag, MapPin, Calculator, Percent } from 'lucide-react';
 import AppLogo from './app-logo';
 import React, { useEffect, useRef } from 'react';
 import { type NavGroup } from '@/types';
-
-// Role-based sidebar color schemes
-const roleColorSchemes: Record<string, {
-    sidebar: string;
-    sidebarForeground: string;
-    sidebarPrimary: string;
-    sidebarPrimaryForeground: string;
-    sidebarAccent: string;
-    sidebarAccentForeground: string;
-    sidebarBorder: string;
-}> = {
-    'super_admin': {
-        sidebar: '#4c1d95', // violet-900
-        sidebarForeground: '#f5f3ff',
-        sidebarPrimary: '#a78bfa',
-        sidebarPrimaryForeground: '#ffffff',
-        sidebarAccent: '#5b21b6',
-        sidebarAccentForeground: '#f5f3ff',
-        sidebarBorder: '#5b21b6',
-    },
-    'admin': {
-        sidebar: '#1e293b', // slate-800
-        sidebarForeground: '#f8fafc',
-        sidebarPrimary: '#94a3b8',
-        sidebarPrimaryForeground: '#ffffff',
-        sidebarAccent: '#334155',
-        sidebarAccentForeground: '#f8fafc',
-        sidebarBorder: '#334155',
-    },
-    'customer': {
-        sidebar: '#1e3a5f', // blue dark
-        sidebarForeground: '#eff6ff',
-        sidebarPrimary: '#60a5fa',
-        sidebarPrimaryForeground: '#ffffff',
-        sidebarAccent: '#1e40af',
-        sidebarAccentForeground: '#eff6ff',
-        sidebarBorder: '#1e40af',
-    },
-    'vendor': {
-        sidebar: '#78350f', // amber-900
-        sidebarForeground: '#fffbeb',
-        sidebarPrimary: '#fbbf24',
-        sidebarPrimaryForeground: '#78350f',
-        sidebarAccent: '#92400e',
-        sidebarAccentForeground: '#fffbeb',
-        sidebarBorder: '#92400e',
-    },
-    'supplier': {
-        sidebar: '#064e3b', // emerald-900
-        sidebarForeground: '#ecfdf5',
-        sidebarPrimary: '#34d399',
-        sidebarPrimaryForeground: '#ffffff',
-        sidebarAccent: '#065f46',
-        sidebarAccentForeground: '#ecfdf5',
-        sidebarBorder: '#065f46',
-    },
-    'purchase': {
-        sidebar: '#7c2d12', // orange-900
-        sidebarForeground: '#fff7ed',
-        sidebarPrimary: '#fb923c',
-        sidebarPrimaryForeground: '#ffffff',
-        sidebarAccent: '#9a3412',
-        sidebarAccentForeground: '#fff7ed',
-        sidebarBorder: '#9a3412',
-    },
-};
 
 const navGroups: NavGroup[] = [
     // {
@@ -182,10 +116,6 @@ const navGroups: NavGroup[] = [
 const footerNavItems: NavItem[] = [];
 
 export function AppSidebar() {
-    const { auth } = usePage().props;
-    const roleSlug = (auth as any)?.user?.role_slug || 'customer';
-    const colorScheme = roleColorSchemes[roleSlug] || roleColorSchemes['customer'];
-
     const SCROLL_KEY = 'sidebar_scroll_top';
     const contentRef = useRef<HTMLDivElement | null>(null);
 
@@ -209,26 +139,8 @@ export function AppSidebar() {
         }
     };
 
-    // Apply role-based sidebar colors via CSS custom properties
-    const sidebarStyle = {
-        '--sidebar': colorScheme.sidebar,
-        '--sidebar-foreground': colorScheme.sidebarForeground,
-        '--sidebar-primary': colorScheme.sidebarPrimary,
-        '--sidebar-primary-foreground': colorScheme.sidebarPrimaryForeground,
-        '--sidebar-accent': colorScheme.sidebarAccent,
-        '--sidebar-accent-foreground': colorScheme.sidebarAccentForeground,
-        '--sidebar-border': colorScheme.sidebarBorder,
-        '--color-sidebar': colorScheme.sidebar,
-        '--color-sidebar-foreground': colorScheme.sidebarForeground,
-        '--color-sidebar-primary': colorScheme.sidebarPrimary,
-        '--color-sidebar-primary-foreground': colorScheme.sidebarPrimaryForeground,
-        '--color-sidebar-accent': colorScheme.sidebarAccent,
-        '--color-sidebar-accent-foreground': colorScheme.sidebarAccentForeground,
-        '--color-sidebar-border': colorScheme.sidebarBorder,
-    } as React.CSSProperties;
-
     return (
-        <Sidebar collapsible="icon" variant="inset" style={sidebarStyle}>
+        <Sidebar collapsible="icon" variant="inset">
             <SidebarHeader>
                 <SidebarMenu>
                     <SidebarMenuItem>
