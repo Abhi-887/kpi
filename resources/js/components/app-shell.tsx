@@ -17,7 +17,7 @@ const roleColorSchemes: Record<string, {
     sidebarAccentForeground: string;
     sidebarBorder: string;
 }> = {
-    'super-admin': {
+    'super_admin': {
         sidebar: 'oklch(0.25 0.05 285)', // violet dark
         sidebarForeground: 'oklch(0.98 0.01 285)',
         sidebarPrimary: 'oklch(0.7 0.15 285)',
@@ -93,6 +93,13 @@ export function AppShell({ children, variant = 'header' }: AppShellProps) {
         '--sidebar-accent': colorScheme.sidebarAccent,
         '--sidebar-accent-foreground': colorScheme.sidebarAccentForeground,
         '--sidebar-border': colorScheme.sidebarBorder,
+        '--color-sidebar': colorScheme.sidebar,
+        '--color-sidebar-foreground': colorScheme.sidebarForeground,
+        '--color-sidebar-primary': colorScheme.sidebarPrimary,
+        '--color-sidebar-primary-foreground': colorScheme.sidebarPrimaryForeground,
+        '--color-sidebar-accent': colorScheme.sidebarAccent,
+        '--color-sidebar-accent-foreground': colorScheme.sidebarAccentForeground,
+        '--color-sidebar-border': colorScheme.sidebarBorder,
     } as React.CSSProperties;
 
     return (
