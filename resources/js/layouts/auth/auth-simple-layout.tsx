@@ -7,12 +7,16 @@ interface AuthLayoutProps {
     name?: string;
     title?: string;
     description?: string;
+    accentColor?: string;
+    logoText?: string;
 }
 
 export default function AuthSimpleLayout({
     children,
     title,
     description,
+    accentColor = '#3b82f6',
+    logoText = 'Shipmate',
 }: PropsWithChildren<AuthLayoutProps>) {
     return (
         <div className="flex min-h-svh flex-col items-center justify-center gap-6 bg-background p-6 md:p-10">
@@ -23,10 +27,13 @@ export default function AuthSimpleLayout({
                             href={home()}
                             className="flex flex-col items-center gap-2 font-medium"
                         >
-                            <div className="mb-1 flex h-9 w-9 items-center justify-center rounded-md">
-                                <AppLogoIcon className="size-9 fill-current text-[var(--foreground)] dark:text-white" />
+                            <div 
+                                className="mb-1 flex h-9 w-9 items-center justify-center rounded-md"
+                                style={{ backgroundColor: accentColor }}
+                            >
+                                <AppLogoIcon className="size-9 fill-current text-white" />
                             </div>
-                            <span className="sr-only">{title}</span>
+                            <span className="sr-only">{logoText}</span>
                         </Link>
 
                         <div className="space-y-2 text-center">

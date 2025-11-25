@@ -19,12 +19,12 @@ import React, { useEffect, useRef } from 'react';
 import { type NavGroup } from '@/types';
 
 const navGroups: NavGroup[] = [
-    {
-        title: 'Overview',
-        items: [
-            { title: 'Dashboard', href: dashboard(), icon: LayoutGrid },
-        ],
-    },
+    // {
+    //     title: 'Overview',
+    //     items: [
+    //         { title: 'Dashboard', href: dashboard(), icon: LayoutGrid },
+    //     ],
+    // },
     {
         title: 'Master Data',
         items: [
@@ -38,79 +38,79 @@ const navGroups: NavGroup[] = [
             { title: 'Customers', href: '/customers', icon: Users },
         ],
     },
-    {
-        title: 'Pricing',
-        items: [
-            { title: 'Price Lists', href: '/price-lists', icon: Tag },
-            { title: 'Rate Cards', href: '/vendor-rates', icon: DollarSign },
-            { title: 'Exchange Rates', href: '/exchange-rates', icon: TrendingUp },
-            { title: 'Charge Applicability', href: '/charge-applicability', icon: Zap },
-            { title: 'Margin Engine', href: '/margin-engine', icon: TrendingUp },
-            { title: 'Formula Engine', href: '/formula-engine', icon: Calculator },
-            { title: 'Tax Calculation Engine', href: '/tax-engine', icon: Percent },
-            {
-                title: 'Pricing Tables',
-                href: '/pricing',
-                icon: DollarSign,
-                children: [
-                    { title: 'Packaging Prices', href: '/packaging-prices', icon: DollarSign },
-                    { title: 'Courier Prices', href: '/courier-prices', icon: DollarSign },
-                    { title: 'Forwarding Prices', href: '/forwarding-prices', icon: DollarSign },
-                ],
-            },
-        ],
-    },
-    {
-        title: 'Sales & Operations',
-        items: [
-            {
-                title: 'Quotations',
-                href: '/quotations',
-                icon: FileText,
-                children: [
-                    { title: 'All Quotations', href: '/quotations', icon: FileText },
-                    { title: 'Create New', href: '/quotations/create', icon: FileText },
-                    { title: 'Pending Approval', href: '/quotations-approval', icon: FileText },
-                ],
-            },
-            { title: 'Orders', href: '/orders', icon: ShoppingCart },
-            { title: 'Shipments', href: '/shipments', icon: Package },
-            { title: 'Invoices', href: '/invoices', icon: Receipt },
-        ],
-    },
-    {
-        title: 'Integrations',
-        items: [
-            {
-                title: 'Integrations',
-                href: '/integrations',
-                icon: Zap,
-                children: [
-                    { title: 'Carriers', href: '/integrations/carriers', icon: Package },
-                    { title: 'Payment Gateways', href: '/integrations/payment-gateways', icon: DollarSign },
-                ],
-            },
-        ],
-    },
-    {
-        title: 'Analytics',
-        items: [
-            { title: 'Price Comparison', href: '/price-comparisons', icon: TrendingUp },
-        ],
-    },
-    {
-        title: 'Monitoring',
-        items: [
-            { title: 'Notifications', href: '/notifications', icon: Bell },
-            { title: 'Audit Logs', href: '/audit-logs', icon: History },
-        ],
-    },
-    {
-        title: 'Administration',
-        items: [
-            { title: 'Settings', href: '/admin/settings', icon: Settings },
-        ],
-    },
+    // {
+    //     title: 'Pricing',
+    //     items: [
+    //         { title: 'Price Lists', href: '/price-lists', icon: Tag },
+    //         { title: 'Rate Cards', href: '/vendor-rates', icon: DollarSign },
+    //         { title: 'Exchange Rates', href: '/exchange-rates', icon: TrendingUp },
+    //         { title: 'Charge Applicability', href: '/charge-applicability', icon: Zap },
+    //         { title: 'Margin Engine', href: '/margin-engine', icon: TrendingUp },
+    //         { title: 'Formula Engine', href: '/formula-engine', icon: Calculator },
+    //         { title: 'Tax Calculation Engine', href: '/tax-engine', icon: Percent },
+    //         {
+    //             title: 'Pricing Tables',
+    //             href: '/pricing',
+    //             icon: DollarSign,
+    //             children: [
+    //                 { title: 'Packaging Prices', href: '/packaging-prices', icon: DollarSign },
+    //                 { title: 'Courier Prices', href: '/courier-prices', icon: DollarSign },
+    //                 { title: 'Forwarding Prices', href: '/forwarding-prices', icon: DollarSign },
+    //             ],
+    //         },
+    //     ],
+    // },
+    // {
+    //     title: 'Sales & Operations',
+    //     items: [
+    //         {
+    //             title: 'Quotations',
+    //             href: '/quotations',
+    //             icon: FileText,
+    //             children: [
+    //                 { title: 'All Quotations', href: '/quotations', icon: FileText },
+    //                 { title: 'Create New', href: '/quotations/create', icon: FileText },
+    //                 { title: 'Pending Approval', href: '/quotations-approval', icon: FileText },
+    //             ],
+    //         },
+    //         { title: 'Orders', href: '/orders', icon: ShoppingCart },
+    //         { title: 'Shipments', href: '/shipments', icon: Package },
+    //         { title: 'Invoices', href: '/invoices', icon: Receipt },
+    //     ],
+    // },
+    // {
+    //     title: 'Integrations',
+    //     items: [
+    //         {
+    //             title: 'Integrations',
+    //             href: '/integrations',
+    //             icon: Zap,
+    //             children: [
+    //                 { title: 'Carriers', href: '/integrations/carriers', icon: Package },
+    //                 { title: 'Payment Gateways', href: '/integrations/payment-gateways', icon: DollarSign },
+    //             ],
+    //         },
+    //     ],
+    // },
+    // {
+    //     title: 'Analytics',
+    //     items: [
+    //         { title: 'Price Comparison', href: '/price-comparisons', icon: TrendingUp },
+    //     ],
+    // },
+    // {
+    //     title: 'Monitoring',
+    //     items: [
+    //         { title: 'Notifications', href: '/notifications', icon: Bell },
+    //         { title: 'Audit Logs', href: '/audit-logs', icon: History },
+    //     ],
+    // },
+    // {
+    //     title: 'Administration',
+    //     items: [
+    //         { title: 'Settings', href: '/admin/settings', icon: Settings },
+    //     ],
+    // },
 ];
 
 const footerNavItems: NavItem[] = [];

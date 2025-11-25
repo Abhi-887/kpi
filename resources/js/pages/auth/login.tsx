@@ -11,23 +11,54 @@ import { store } from '@/routes/login';
 import { request } from '@/routes/password';
 import { Form, Head } from '@inertiajs/react';
 
+interface RoleConfig {
+    slug: string;
+    label: string;
+    color: string;
+    hexColor: string;
+    title: string;
+    description: string;
+    logoText: string;
+    isAdmin: boolean;
+    isVendor: boolean;
+    isCustomer: boolean;
+}
+
 interface LoginProps {
     status?: string;
     canResetPassword: boolean;
     canRegister: boolean;
+    roleConfig?: RoleConfig;
 }
 
 export default function Login({
     status,
     canResetPassword,
     canRegister,
+    roleConfig,
 }: LoginProps) {
+    // Default to customer config if not provided
+    const config = roleConfig || {
+        slug: 'customer',
+        label: 'Customer',
+        color: 'blue',
+        hexColor: '#3b82f6',
+        title: 'Log in to your account',
+        description: 'Enter your email and password below to log in',
+        logoText: 'Customer',
+        isAdmin: false,
+        isVendor: false,
+        isCustomer: true,
+    };
+
     return (
         <AuthLayout
-            title="Log in to your account"
-            description="Enter your email and password below to log in"
+            title={config.title}
+            description={config.description}
+            accentColor={config.hexColor}
+            logoText={config.logoText}
         >
-            <Head title="Log in" />
+            <Head title={`Log in - ${config.label}`} />
 
             <Form
                 {...store.form()}
@@ -92,9 +123,10 @@ export default function Login({
                                 tabIndex={4}
                                 disabled={processing}
                                 data-test="login-button"
+                                style={{ backgroundColor: config.hexColor }}
                             >
                                 {processing && <Spinner />}
-                                Log in
+                                Log in to {config.label}
                             </Button>
                         </div>
 

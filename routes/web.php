@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuditLogController;
+use App\Http\Controllers\Auth\RoleLoginController;
 use App\Http\Controllers\ChargeController;
 use App\Http\Controllers\ChargeRuleController;
 use App\Http\Controllers\ContainerTypeController;
@@ -33,6 +34,14 @@ use App\Http\Controllers\VendorRateController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
+
+// Role-specific login routes
+Route::get('/login/{role}', [RoleLoginController::class, 'show'])->name('login.role');
+
+// Role selector
+Route::get('/select-role', function () {
+    return Inertia::render('role-login-selector');
+})->name('select-role');
 
 Route::get('/', function () {
     return Inertia::render('welcome', [

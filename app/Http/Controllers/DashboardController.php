@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Shipment;
-use App\Models\Order;
-use App\Models\Invoice;
 use App\Models\Customer;
+use App\Models\Invoice;
+use App\Models\Order;
+use App\Models\Shipment;
+use App\Services\RoleService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -14,6 +15,10 @@ class DashboardController extends Controller
 {
     public function index(Request $request)
     {
+        /** @var \App\Models\User $user */
+        $user = auth()->guard('web')->user();
+        $roleConfig = RoleService::getRoleConfig($user->role());
+
         $startDate = $request->query('start_date') ? Carbon::parse($request->query('start_date')) : now()->subMonths(3);
         $endDate = $request->query('end_date') ? Carbon::parse($request->query('end_date')) : now();
 
@@ -124,6 +129,7 @@ class DashboardController extends Controller
                 'start_date' => $startDate->format('Y-m-d'),
                 'end_date' => $endDate->format('Y-m-d'),
             ],
+            'roleConfig' => $roleConfig,
         ]);
     }
 }

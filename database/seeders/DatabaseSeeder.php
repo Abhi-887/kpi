@@ -16,6 +16,9 @@ class DatabaseSeeder extends Seeder
         // Seed roles first
         $this->call(RoleSeeder::class);
 
+        // Seed role-based test users
+        $this->call(RoleUserSeeder::class);
+
         // Create test user
         $user = User::firstOrCreate(
             ['email' => 'test@example.com'],
