@@ -28,6 +28,8 @@ const roleThemes: Record<string, {
     border: string;
     primary: string;
     primaryForeground: string;
+    // Heading color
+    heading: string;
 }> = {
     'super_admin': {
         // Violet theme
@@ -49,9 +51,10 @@ const roleThemes: Record<string, {
         border: '#e9d5ff',
         primary: '#7c3aed',
         primaryForeground: '#ffffff',
+        heading: '#5b21b6',
     },
     'admin': {
-        // Slate theme
+        // Slate theme - Professional dark theme with light content
         sidebar: '#1e293b',
         sidebarForeground: '#f8fafc',
         sidebarPrimary: '#94a3b8',
@@ -59,17 +62,18 @@ const roleThemes: Record<string, {
         sidebarAccent: '#334155',
         sidebarAccentForeground: '#f8fafc',
         sidebarBorder: '#475569',
-        // Content
-        background: '#f8fafc',
+        // Content - Light background for contrast
+        background: '#f1f5f9',
         card: '#ffffff',
         cardForeground: '#0f172a',
-        muted: '#f1f5f9',
+        muted: '#e2e8f0',
         mutedForeground: '#475569',
-        accent: '#e2e8f0',
+        accent: '#cbd5e1',
         accentForeground: '#1e293b',
-        border: '#e2e8f0',
-        primary: '#475569',
+        border: '#cbd5e1',
+        primary: '#3b82f6',
         primaryForeground: '#ffffff',
+        heading: '#1e293b',
     },
     'customer': {
         // Blue theme
@@ -91,6 +95,7 @@ const roleThemes: Record<string, {
         border: '#bfdbfe',
         primary: '#2563eb',
         primaryForeground: '#ffffff',
+        heading: '#1e40af',
     },
     'vendor': {
         // Amber/Orange theme
@@ -112,6 +117,7 @@ const roleThemes: Record<string, {
         border: '#fcd34d',
         primary: '#d97706',
         primaryForeground: '#ffffff',
+        heading: '#92400e',
     },
     'supplier': {
         // Emerald/Green theme
@@ -133,6 +139,7 @@ const roleThemes: Record<string, {
         border: '#6ee7b7',
         primary: '#059669',
         primaryForeground: '#ffffff',
+        heading: '#065f46',
     },
     'purchase': {
         // Orange/Red theme
@@ -154,6 +161,7 @@ const roleThemes: Record<string, {
         border: '#fdba74',
         primary: '#ea580c',
         primaryForeground: '#ffffff',
+        heading: '#9a3412',
     },
 };
 
@@ -206,6 +214,9 @@ export function AppShell({ children, variant = 'header' }: AppShellProps) {
         '--color-border': theme.border,
         '--color-primary': theme.primary,
         '--color-primary-foreground': theme.primaryForeground,
+        // Heading
+        '--heading': theme.heading,
+        '--color-heading': theme.heading,
     } as React.CSSProperties;
 
     return (

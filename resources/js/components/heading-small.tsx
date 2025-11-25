@@ -7,7 +7,12 @@ export default function HeadingSmall({
 }) {
     return (
         <header>
-            <h3 className="mb-0.5 text-base font-medium">{title}</h3>
+            <h3 
+                className="mb-0.5 text-base font-medium"
+                style={{ color: 'var(--heading, var(--color-heading, inherit))' }}
+            >
+                {title}
+            </h3>
             {description && (
                 <p className="text-sm text-muted-foreground">{description}</p>
             )}
