@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Enums\UserRole;
 use Closure;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -18,7 +19,21 @@ class CheckRole
             return response()->json(['message' => 'Unauthorized'], 401);
         }
 
-        if (auth()->user()->hasAnyRole($roles)) {
+        $user = auth()->user();
+        
+        // Check role_slug (enum-based role system)
+        if ($user->role_slug) {
+            $userRoleSlug = $user->role_slug instanceof UserRole 
+                ? $user->role_slug->value 
+                : $user->role_slug;
+            
+            if (in_array($userRoleSlug, $roles, true)) {
+                return $next($request);
+            }
+        }
+
+        // Fallback: Check many-to-many roles relationship
+        if ($user->hasAnyRole($roles)) {
             return $next($request);
         }
 

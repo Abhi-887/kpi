@@ -28,7 +28,7 @@ Route::middleware('auth')->group(function () {
         ->name('two-factor.show');
 
     // System Settings (Admin only)
-    Route::middleware('role:admin')->group(function () {
+    Route::middleware('role:super_admin,admin')->group(function () {
         Route::get('admin/settings', [SettingsController::class, 'index'])->name('admin.settings.index');
         Route::patch('admin/settings', [SettingsController::class, 'update'])->name('admin.settings.update');
         Route::post('admin/settings/reset', [SettingsController::class, 'reset'])->name('admin.settings.reset');

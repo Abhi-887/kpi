@@ -16,7 +16,7 @@ export default function AuthSimpleLayout({
     title,
     description,
     accentColor = '#3b82f6',
-    logoText = 'Shipmate',
+    logoText = 'CSA',
 }: PropsWithChildren<AuthLayoutProps>) {
     return (
         <div className="flex min-h-svh flex-col items-center justify-center gap-6 bg-background p-6 md:p-10">

@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use App\Enums\UserRole;
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
 
 class RoleMiddleware
@@ -27,6 +28,14 @@ class RoleMiddleware
         }, $roles);
 
         $userRole = $request->user()->role();
+
+        // Debug logging
+        Log::info('RoleMiddleware Check', [
+            'user_id' => $request->user()->id,
+            'user_role' => $userRole->value,
+            'allowed_roles' => array_map(fn($r) => $r->value, $allowedRoles),
+            'has_access' => in_array($userRole, $allowedRoles, true),
+        ]);
 
         if (! in_array($userRole, $allowedRoles, true)) {
             abort(403, 'Unauthorized role');

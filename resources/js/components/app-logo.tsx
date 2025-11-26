@@ -19,7 +19,7 @@ export default function AppLogo() {
     const portalName = portalNames[roleSlug] || 'Portal';
     
     const appName = useMemo(() => {
-        return (import.meta.env.VITE_APP_NAME as string) || 'Shipmate';
+        return (import.meta.env.VITE_APP_NAME as string) || 'CSA';
     }, []);
     return (
         <>

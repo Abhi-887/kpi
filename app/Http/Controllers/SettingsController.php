@@ -10,7 +10,7 @@ class SettingsController extends Controller
 {
     public function index()
     {
-        return Inertia::render('Settings/Index', [
+        return Inertia::render('settings/Index', [
             'generalSettings' => SystemSetting::getByCategory('general'),
             'emailSettings' => SystemSetting::getByCategory('email'),
             'shippingSettings' => SystemSetting::getByCategory('shipping'),

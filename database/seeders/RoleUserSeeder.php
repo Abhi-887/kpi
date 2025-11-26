@@ -17,37 +17,37 @@ class RoleUserSeeder extends Seeder
         $testUsers = [
             [
                 'name' => 'Super Admin',
-                'email' => 'superadmin@shipmate.local',
+                'email' => 'superadmin@csa.local',
                 'password' => 'password',
                 'role_slug' => UserRole::SUPER_ADMIN,
             ],
             [
                 'name' => 'Admin User',
-                'email' => 'admin@shipmate.local',
+                'email' => 'admin@csa.local',
                 'password' => 'password',
                 'role_slug' => UserRole::ADMIN,
             ],
             [
                 'name' => 'Customer User',
-                'email' => 'customer@shipmate.local',
+                'email' => 'customer@csa.local',
                 'password' => 'password',
                 'role_slug' => UserRole::CUSTOMER,
             ],
             [
                 'name' => 'Vendor User',
-                'email' => 'vendor@shipmate.local',
+                'email' => 'vendor@csa.local',
                 'password' => 'password',
                 'role_slug' => UserRole::VENDOR,
             ],
             [
                 'name' => 'Supplier User',
-                'email' => 'supplier@shipmate.local',
+                'email' => 'supplier@csa.local',
                 'password' => 'password',
                 'role_slug' => UserRole::SUPPLIER,
             ],
             [
                 'name' => 'Purchase Manager',
-                'email' => 'purchase@shipmate.local',
+                'email' => 'purchase@csa.local',
                 'password' => 'password',
                 'role_slug' => UserRole::PURCHASE,
             ],

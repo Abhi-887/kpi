@@ -11,14 +11,30 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
-import { type NavItem } from '@/types';
-import { Link } from '@inertiajs/react';
+import { type NavItem, type SharedData, type NavGroup } from '@/types';
+import { Link, usePage } from '@inertiajs/react';
 import { BookOpen, Folder, LayoutGrid, Package, DollarSign, FileText, Users, ShoppingCart, Receipt, Bell, Zap, Settings, History, TrendingUp, Layers, Database, Tag, MapPin, Calculator, Percent } from 'lucide-react';
 import AppLogo from './app-logo';
-import React, { useEffect, useRef } from 'react';
-import { type NavGroup } from '@/types';
+import React, { useEffect, useRef, useMemo } from 'react';
 
-const navGroups: NavGroup[] = [
+// Extended NavItem with role permissions
+interface NavItemWithRoles extends NavItem {
+    allowedRoles?: string[];
+    children?: NavItemWithRoles[];
+}
+
+interface NavGroupWithRoles {
+    title: string;
+    items: NavItemWithRoles[];
+    allowedRoles?: string[];
+}
+
+// All roles for reference
+const ALL_ROLES = ['super_admin', 'admin', 'customer', 'vendor', 'supplier', 'purchase'];
+const ADMIN_ROLES = ['super_admin', 'admin'];
+const INTERNAL_ROLES = ['super_admin', 'admin', 'purchase'];
+
+const navGroupsConfig: NavGroupWithRoles[] = [
     // {
     //     title: 'Overview',
     //     items: [
@@ -27,15 +43,16 @@ const navGroups: NavGroup[] = [
     // },
     {
         title: 'Master Data',
+        allowedRoles: INTERNAL_ROLES, // Only super_admin, admin, purchase can see Master Data
         items: [
-            { title: 'Items', href: '/items', icon: Database },
-            { title: 'Unit of Measures', href: '/unit-of-measures', icon: Layers },
-            { title: 'Tax Codes', href: '/tax-codes', icon: Receipt },
-            { title: 'Charges', href: '/charges', icon: Tag },
-            { title: 'Container Types', href: '/container-types', icon: Layers },
-            { title: 'Ports', href: '/ports', icon: MapPin },
-            { title: 'Suppliers', href: '/suppliers', icon: Users },
-            { title: 'Customers', href: '/customers', icon: Users },
+            { title: 'Items', href: '/items', icon: Database, allowedRoles: INTERNAL_ROLES },
+            { title: 'Unit of Measures', href: '/unit-of-measures', icon: Layers, allowedRoles: ADMIN_ROLES },
+            { title: 'Tax Codes', href: '/tax-codes', icon: Receipt, allowedRoles: ADMIN_ROLES },
+            { title: 'Charges', href: '/charges', icon: Tag, allowedRoles: ADMIN_ROLES },
+            { title: 'Container Types', href: '/container-types', icon: Layers, allowedRoles: ADMIN_ROLES },
+            { title: 'Ports', href: '/ports', icon: MapPin, allowedRoles: INTERNAL_ROLES },
+            { title: 'Suppliers', href: '/suppliers', icon: Users, allowedRoles: ['super_admin', 'admin', 'purchase', 'supplier'] },
+            { title: 'Customers', href: '/customers', icon: Users, allowedRoles: ADMIN_ROLES },
         ],
     },
     // {
@@ -98,26 +115,71 @@ const navGroups: NavGroup[] = [
     //         { title: 'Price Comparison', href: '/price-comparisons', icon: TrendingUp },
     //     ],
     // },
-    // {
-    //     title: 'Monitoring',
-    //     items: [
-    //         { title: 'Notifications', href: '/notifications', icon: Bell },
-    //         { title: 'Audit Logs', href: '/audit-logs', icon: History },
-    //     ],
-    // },
-    // {
-    //     title: 'Administration',
-    //     items: [
-    //         { title: 'Settings', href: '/admin/settings', icon: Settings },
-    //     ],
-    // },
+    {
+        title: 'Monitoring',
+        allowedRoles: ALL_ROLES,
+        items: [
+            { title: 'Notifications', href: '/notifications', icon: Bell },
+            // { title: 'Audit Logs', href: '/audit-logs', icon: History },
+        ],
+    },
+    {
+        title: 'Administration',
+        allowedRoles: ADMIN_ROLES, // Only super_admin and admin
+        items: [
+            { title: 'Settings', href: '/admin/settings', icon: Settings, allowedRoles: ADMIN_ROLES },
+        ],
+    },
 ];
 
 const footerNavItems: NavItem[] = [];
 
+// Helper function to filter items by role
+function filterItemsByRole(items: NavItemWithRoles[], userRole: string): NavItem[] {
+    return items
+        .filter((item) => {
+            // If no allowedRoles specified, show to everyone
+            if (!item.allowedRoles || item.allowedRoles.length === 0) {
+                return true;
+            }
+            return item.allowedRoles.includes(userRole);
+        })
+        .map((item) => {
+            const { allowedRoles, children, ...rest } = item;
+            return {
+                ...rest,
+                children: children ? filterItemsByRole(children, userRole) : undefined,
+            } as NavItem;
+        });
+}
+
+// Helper function to filter groups by role
+function filterGroupsByRole(groups: NavGroupWithRoles[], userRole: string): NavGroup[] {
+    return groups
+        .filter((group) => {
+            // If no allowedRoles specified, show to everyone
+            if (!group.allowedRoles || group.allowedRoles.length === 0) {
+                return true;
+            }
+            return group.allowedRoles.includes(userRole);
+        })
+        .map((group) => ({
+            title: group.title,
+            items: filterItemsByRole(group.items, userRole),
+        }))
+        .filter((group) => group.items.length > 0); // Remove empty groups
+}
+
 export function AppSidebar() {
     const SCROLL_KEY = 'sidebar_scroll_top';
     const contentRef = useRef<HTMLDivElement | null>(null);
+    const { auth } = usePage<SharedData>().props;
+    const userRole = (auth?.user as any)?.role_slug || 'customer';
+
+    // Filter navigation groups based on user role
+    const navGroups = useMemo(() => {
+        return filterGroupsByRole(navGroupsConfig, userRole);
+    }, [userRole]);
 
     useEffect(() => {
         try {

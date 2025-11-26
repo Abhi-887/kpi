@@ -66,7 +66,7 @@ const roleOptions: RoleLoginOption[] = [
 export default function RoleLoginSelector() {
     return (
         <>
-            <Head title="Select Role - Shipmate" />
+            <Head title="Select Role - CSA" />
             <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted p-4 md:p-8">
                 <div className="mx-auto max-w-6xl space-y-12">
                     {/* Header */}
@@ -77,7 +77,7 @@ export default function RoleLoginSelector() {
                             </div>
                         </div>
                         <div>
-                            <h1 className="text-4xl font-bold tracking-tight">Shipmate</h1>
+                            <h1 className="text-4xl font-bold tracking-tight">CSA</h1>
                             <p className="mt-2 text-lg text-muted-foreground">
                                 Select your role to access your dashboard
                             </p>
@@ -129,7 +129,7 @@ export default function RoleLoginSelector() {
                             {roleOptions.map((role) => (
                                 <div key={role.slug} className="flex justify-between">
                                     <span className="text-muted-foreground">{role.label}:</span>
-                                    <code className="font-mono">{role.slug}@shipmate.local</code>
+                                    <code className="font-mono">{role.slug}@csa.local</code>
                                 </div>
                             ))}
                         </div>
