@@ -7,6 +7,7 @@ use App\Http\Controllers\ChargeRuleController;
 use App\Http\Controllers\ContainerTypeController;
 use App\Http\Controllers\CostComponentController;
 use App\Http\Controllers\CourierPriceController;
+use App\Http\Controllers\CurrencyController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ExchangeRateController;
@@ -57,6 +58,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('unit-of-measures', UnitOfMeasureController::class);
     Route::resource('tax-codes', TaxCodeController::class);
     Route::resource('charges', ChargeController::class);
+    Route::resource('currencies', CurrencyController::class);
     Route::resource('container-types', ContainerTypeController::class);
     Route::patch('container-types/{containerType}/toggle-status', [ContainerTypeController::class, 'toggleStatus'])->name('container-types.toggle-status');
     Route::resource('ports', LocationController::class);

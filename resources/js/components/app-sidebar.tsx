@@ -13,7 +13,7 @@ import {
 import { dashboard } from '@/routes';
 import { type NavItem, type SharedData, type NavGroup } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid, Package, DollarSign, FileText, Users, ShoppingCart, Receipt, Bell, Zap, Settings, History, TrendingUp, Layers, Database, Tag, MapPin, Calculator, Percent } from 'lucide-react';
+import { BookOpen, Folder, LayoutGrid, Package, DollarSign, FileText, Users, ShoppingCart, Receipt, Bell, Zap, Settings, History, TrendingUp, Layers, Database, Tag, MapPin, Calculator, Percent, Coins } from 'lucide-react';
 import AppLogo from './app-logo';
 import React, { useEffect, useRef, useMemo } from 'react';
 
@@ -49,6 +49,7 @@ const navGroupsConfig: NavGroupWithRoles[] = [
             { title: 'Unit of Measures', href: '/unit-of-measures', icon: Layers, allowedRoles: ADMIN_ROLES },
             { title: 'Tax Codes', href: '/tax-codes', icon: Receipt, allowedRoles: ADMIN_ROLES },
             { title: 'Charges', href: '/charges', icon: Tag, allowedRoles: ADMIN_ROLES },
+            { title: 'Currencies', href: '/currencies', icon: Coins, allowedRoles: ADMIN_ROLES },
             { title: 'Container Types', href: '/container-types', icon: Layers, allowedRoles: ADMIN_ROLES },
             { title: 'Ports', href: '/ports', icon: MapPin, allowedRoles: INTERNAL_ROLES },
             { title: 'Suppliers', href: '/suppliers', icon: Users, allowedRoles: ['super_admin', 'admin', 'purchase', 'supplier'] },
