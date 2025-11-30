@@ -13,7 +13,7 @@ import {
 import { dashboard } from '@/routes';
 import { type NavItem, type SharedData, type NavGroup } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid, Package, DollarSign, FileText, Users, ShoppingCart, Receipt, Bell, Zap, Settings, History, TrendingUp, Layers, Database, Tag, MapPin, Calculator, Percent, Coins } from 'lucide-react';
+import { BookOpen, Folder, LayoutGrid, Package, DollarSign, FileText, Users, ShoppingCart, Receipt, Bell, Zap, Settings, History, TrendingUp, Layers, Database, Tag, MapPin, Calculator, Percent, Coins, Shield, Key } from 'lucide-react';
 import AppLogo from './app-logo';
 import React, { useEffect, useRef, useMemo } from 'react';
 
@@ -122,6 +122,15 @@ const navGroupsConfig: NavGroupWithRoles[] = [
         items: [
             { title: 'Notifications', href: '/notifications', icon: Bell },
             // { title: 'Audit Logs', href: '/audit-logs', icon: History },
+        ],
+    },
+    {
+        title: 'User Management',
+        allowedRoles: ADMIN_ROLES, // Only super_admin and admin
+        items: [
+            { title: 'Users', href: '/users', icon: Users, allowedRoles: ADMIN_ROLES },
+            { title: 'Roles', href: '/roles', icon: Shield, allowedRoles: ADMIN_ROLES },
+            { title: 'Permissions', href: '/permissions', icon: Key, allowedRoles: ADMIN_ROLES },
         ],
     },
     {

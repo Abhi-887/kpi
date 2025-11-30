@@ -27,6 +27,8 @@ class User extends Authenticatable
         'email',
         'password',
         'role_slug',
+        'is_active',
+        'last_login_at',
     ];
 
     /**
@@ -53,6 +55,8 @@ class User extends Authenticatable
             'password' => 'hashed',
             'two_factor_confirmed_at' => 'datetime',
             'role_slug' => UserRole::class,
+            'is_active' => 'boolean',
+            'last_login_at' => 'datetime',
         ];
     }
 
@@ -88,5 +92,21 @@ class User extends Authenticatable
     public function roleLabel(): string
     {
         return $this->role()->label();
+    }
+
+    /**
+     * Scope to get only active users
+     */
+    public function scopeActive($query)
+    {
+        return $query->where('is_active', true);
+    }
+
+    /**
+     * Get all permissions through roles
+     */
+    public function getAllPermissionsAttribute(): array
+    {
+        return $this->getAllPermissions()->toArray();
     }
 }
