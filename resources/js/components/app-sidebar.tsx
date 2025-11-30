@@ -35,12 +35,12 @@ const ADMIN_ROLES = ['super_admin', 'admin'];
 const INTERNAL_ROLES = ['super_admin', 'admin', 'purchase'];
 
 const navGroupsConfig: NavGroupWithRoles[] = [
-    // {
-    //     title: 'Overview',
-    //     items: [
-    //         { title: 'Dashboard', href: dashboard(), icon: LayoutGrid },
-    //     ],
-    // },
+    {
+        title: 'Overview',
+        items: [
+            { title: 'Dashboard', href: dashboard(), icon: LayoutGrid },
+        ],
+    },
     {
         title: 'Master Data',
         allowedRoles: INTERNAL_ROLES, // Only super_admin, admin, purchase can see Master Data

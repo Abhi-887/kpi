@@ -14,7 +14,7 @@ import { usePage, router } from '@inertiajs/react'
 import { Head } from '@inertiajs/react'
 import AppLayout from '@/layouts/app-layout'
 import { useState } from 'react'
-import { Plus, Pencil, Trash2 } from 'lucide-react'
+import { Plus, Pencil, Trash2, Eye } from 'lucide-react'
 import { type BreadcrumbItem } from '@/types'
 import { BaseDialog } from '@/components/dialogs/base-dialog'
 import { ConfirmDialog } from '@/components/dialogs/confirm-dialog'
@@ -66,6 +66,7 @@ export default function ChargesIndex() {
   const [isCreateOpen, setIsCreateOpen] = useState(false)
   const [isEditOpen, setIsEditOpen] = useState(false)
   const [isDeleteOpen, setIsDeleteOpen] = useState(false)
+  const [isDetailOpen, setIsDetailOpen] = useState(false)
   const [selectedCharge, setSelectedCharge] = useState<Charge | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [formData, setFormData] = useState({
@@ -121,6 +122,11 @@ export default function ChargesIndex() {
   const handleDelete = (charge: Charge) => {
     setSelectedCharge(charge)
     setIsDeleteOpen(true)
+  }
+
+  const handleView = (charge: Charge) => {
+    setSelectedCharge(charge)
+    setIsDetailOpen(true)
   }
 
   const submitCreate = async () => {
@@ -306,6 +312,9 @@ export default function ChargesIndex() {
                         </Badge>
                       </td>
                       <td className="py-3 px-4 text-center space-x-2">
+                        <Button size="sm" variant="ghost" onClick={() => handleView(charge)}>
+                          <Eye className="w-4 h-4" />
+                        </Button>
                         <Button size="sm" variant="ghost" onClick={() => handleEdit(charge)}>
                           <Pencil className="w-4 h-4" />
                         </Button>
@@ -619,6 +628,99 @@ export default function ChargesIndex() {
         isLoading={isLoading}
         variant="destructive"
       />
+
+      {/* Detail Modal */}
+      <BaseDialog open={isDetailOpen} onOpenChange={setIsDetailOpen} title="Charge Details">
+        {selectedCharge && (
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label className="text-muted-foreground text-xs">Charge ID</Label>
+                <p className="font-mono font-bold text-primary">{selectedCharge.charge_id}</p>
+              </div>
+              <div>
+                <Label className="text-muted-foreground text-xs">Charge Code</Label>
+                <p className="font-mono font-medium">{selectedCharge.charge_code}</p>
+              </div>
+            </div>
+
+            <div>
+              <Label className="text-muted-foreground text-xs">Charge Name</Label>
+              <p className="font-medium">{selectedCharge.charge_name}</p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label className="text-muted-foreground text-xs">Charge Type</Label>
+                <div className="mt-1">
+                  <Badge className={getChargeTypeBadgeColor(selectedCharge.charge_type)}>
+                    {CHARGE_TYPE_LABELS[selectedCharge.charge_type] || selectedCharge.charge_type}
+                  </Badge>
+                </div>
+              </div>
+              <div>
+                <Label className="text-muted-foreground text-xs">Status</Label>
+                <div className="mt-1">
+                  <Badge
+                    className={
+                      selectedCharge.is_active
+                        ? 'bg-green-100 text-green-800 dark:bg-green-600 dark:text-white'
+                        : 'bg-gray-100 text-gray-800 dark:bg-gray-600 dark:text-white'
+                    }
+                  >
+                    {selectedCharge.is_active ? 'Active' : 'Inactive'}
+                  </Badge>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label className="text-muted-foreground text-xs">Unit of Measure</Label>
+                <p className="font-medium">
+                  {selectedCharge.defaultUom
+                    ? `${selectedCharge.defaultUom.name} (${selectedCharge.defaultUom.symbol})`
+                    : '-'}
+                </p>
+              </div>
+              <div>
+                <Label className="text-muted-foreground text-xs">Tax Code</Label>
+                <p className="font-medium">
+                  {selectedCharge.defaultTax
+                    ? `${selectedCharge.defaultTax.tax_code} - ${selectedCharge.defaultTax.tax_name}`
+                    : '-'}
+                </p>
+              </div>
+            </div>
+
+            <div>
+              <Label className="text-muted-foreground text-xs">Fixed Rate (INR)</Label>
+              <p className="font-medium text-lg">
+                {selectedCharge.default_fixed_rate_inr
+                  ? `₹${selectedCharge.default_fixed_rate_inr.toLocaleString()}`
+                  : '-'}
+              </p>
+            </div>
+
+            {selectedCharge.description && (
+              <div>
+                <Label className="text-muted-foreground text-xs">Description</Label>
+                <p className="text-sm text-muted-foreground">{selectedCharge.description}</p>
+              </div>
+            )}
+
+            <div className="flex gap-2 justify-end pt-4 border-t">
+              <Button variant="outline" onClick={() => setIsDetailOpen(false)}>
+                Close
+              </Button>
+              <Button onClick={() => { setIsDetailOpen(false); handleEdit(selectedCharge); }}>
+                <Pencil className="w-4 h-4 mr-2" />
+                Edit
+              </Button>
+            </div>
+          </div>
+        )}
+      </BaseDialog>
     </AppLayout>
   )
 }

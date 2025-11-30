@@ -58,6 +58,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('tax-codes', TaxCodeController::class);
     Route::resource('charges', ChargeController::class);
     Route::resource('container-types', ContainerTypeController::class);
+    Route::patch('container-types/{containerType}/toggle-status', [ContainerTypeController::class, 'toggleStatus'])->name('container-types.toggle-status');
     Route::resource('ports', LocationController::class);
     Route::post('ports/bulk-import', [LocationController::class, 'bulkImport'])->name('ports.bulk-import');
     Route::resource('suppliers', SupplierController::class);

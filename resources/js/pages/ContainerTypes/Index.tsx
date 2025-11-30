@@ -7,7 +7,7 @@ import { usePage, router } from '@inertiajs/react'
 import { Head } from '@inertiajs/react'
 import AppLayout from '@/layouts/app-layout'
 import { useState } from 'react'
-import { Plus, Pencil, Trash2 } from 'lucide-react'
+import { Plus, Pencil, Trash2, Power } from 'lucide-react'
 import { type BreadcrumbItem } from '@/types'
 import { BaseDialog } from '@/components/dialogs/base-dialog'
 import { ConfirmDialog } from '@/components/dialogs/confirm-dialog'
@@ -66,6 +66,32 @@ export default function ContainerTypesIndex() {
   const handleDelete = (containerType: ContainerType) => {
     setSelectedContainerType(containerType)
     setIsDeleteOpen(true)
+  }
+
+  const handleToggleStatus = async (containerType: ContainerType) => {
+    try {
+      const response = await fetch(`/container-types/${containerType.container_type_id}/toggle-status`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
+          'X-CSRF-TOKEN': csrf_token,
+        },
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        showError('Error', data.message || 'Failed to toggle status')
+        return
+      }
+
+      success(data.message)
+      router.reload()
+    } catch (error) {
+      console.error('Error:', error)
+      showError('Failed to toggle status', 'An unexpected error occurred')
+    }
   }
 
   const submitCreate = async () => {
@@ -237,6 +263,14 @@ export default function ContainerTypesIndex() {
                         </Badge>
                       </td>
                       <td className="py-3 px-4 text-center space-x-2">
+                        <Button 
+                          size="sm" 
+                          variant="ghost" 
+                          onClick={() => handleToggleStatus(containerType)}
+                          title={containerType.is_active ? 'Deactivate' : 'Activate'}
+                        >
+                          <Power className={`w-4 h-4 ${containerType.is_active ? 'text-green-500' : 'text-gray-400'}`} />
+                        </Button>
                         <Button size="sm" variant="ghost" onClick={() => handleEdit(containerType)}>
                           <Pencil className="w-4 h-4" />
                         </Button>
@@ -341,6 +375,19 @@ export default function ContainerTypesIndex() {
               className={errors.description ? 'border-red-500' : ''}
             />
             {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description}</p>}
+          </div>
+
+          <div className="flex items-center space-x-3">
+            <input
+              type="checkbox"
+              id="edit-is-active"
+              checked={formData.is_active}
+              onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
+              className="w-4 h-4 rounded border-gray-300"
+            />
+            <Label htmlFor="edit-is-active" className="font-normal cursor-pointer">
+              Active
+            </Label>
           </div>
 
           <div className="flex gap-2 justify-end pt-4">

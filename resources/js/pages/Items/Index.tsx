@@ -125,11 +125,14 @@ export default function ItemsIndex() {
                   </SelectContent>
                 </Select>
               </div>
-              <div className="flex flex-col md:flex-row gap-2">
-                <Button onClick={handleSearch} variant="default" className="flex-1">
-                  <Search className="w-4 h-4 mr-2" /> Search
-                </Button>
-                <Button onClick={handleReset} variant="outline" className="flex-1">Reset</Button>
+              <div>
+                <label className="text-sm font-medium mb-1 block">&nbsp;</label>
+                <div className="flex gap-2">
+                  <Button onClick={handleSearch} variant="default" className="flex-1">
+                    <Search className="w-4 h-4 mr-2" /> Search
+                  </Button>
+                  <Button onClick={handleReset} variant="outline" className="flex-1">Reset</Button>
+                </div>
               </div>
             </div>
           </CardContent>

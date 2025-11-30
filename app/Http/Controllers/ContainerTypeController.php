@@ -84,4 +84,29 @@ class ContainerTypeController extends Controller
             ], 400);
         }
     }
+
+    public function toggleStatus(ContainerType $containerType): JsonResponse
+    {
+        try {
+            $containerType->update([
+                'is_active' => !$containerType->is_active,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'data' => $containerType,
+                'message' => "Container type {$containerType->container_code} is now " . ($containerType->is_active ? 'active' : 'inactive'),
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error toggling container type status', [
+                'id' => $containerType->container_type_id,
+                'exception' => $e->getMessage(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to toggle container type status: '.$e->getMessage(),
+            ], 400);
+        }
+    }
 }
