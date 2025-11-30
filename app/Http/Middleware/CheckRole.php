@@ -20,20 +20,30 @@ class CheckRole
         }
 
         $user = auth()->user();
-        
+
+        // Super Admin (via roles relationship) has access to everything
+        if (method_exists($user, 'isSuperAdmin') && $user->isSuperAdmin()) {
+            return $next($request);
+        }
+
         // Check role_slug (enum-based role system)
         if ($user->role_slug) {
-            $userRoleSlug = $user->role_slug instanceof UserRole 
-                ? $user->role_slug->value 
+            $userRoleSlug = $user->role_slug instanceof UserRole
+                ? $user->role_slug->value
                 : $user->role_slug;
-            
+
+            // Super Admin via enum also has access everywhere
+            if ($userRoleSlug === UserRole::SUPER_ADMIN->value) {
+                return $next($request);
+            }
+
             if (in_array($userRoleSlug, $roles, true)) {
                 return $next($request);
             }
         }
 
-        // Fallback: Check many-to-many roles relationship
-        if ($user->hasAnyRole($roles)) {
+        // Check many-to-many roles relationship
+        if (method_exists($user, 'hasAnyRole') && $user->hasAnyRole($roles)) {
             return $next($request);
         }
 

@@ -46,7 +46,7 @@ class HandleInertiaRequests extends Middleware
                 'id' => $user->id,
                 'name' => $user->name,
                 'email' => $user->email,
-                'role_slug' => $user->role_slug,
+                'role_slug' => $user->role_slug?->value ?? null,
                 'role_color' => $user->roleColor(),
                 'role_label' => $user->roleLabel(),
             ];

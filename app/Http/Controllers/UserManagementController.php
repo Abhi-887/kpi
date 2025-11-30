@@ -42,7 +42,7 @@ class UserManagementController extends Controller
         return Inertia::render('Users/Index', [
             'users' => $users,
             'filters' => $request->only(['search', 'role']),
-            'roles' => Role::active()->get(['id', 'name', 'slug', 'color']),
+            'roles' => Role::active()->get(['id', 'name', 'slug', 'color', 'is_system', 'is_active']),
         ]);
     }
 
@@ -52,7 +52,7 @@ class UserManagementController extends Controller
     public function create(): Response
     {
         return Inertia::render('Users/Create', [
-            'roles' => Role::active()->get(['id', 'name', 'slug', 'color', 'description']),
+            'roles' => Role::active()->get(['id', 'name', 'slug', 'color', 'description', 'is_system', 'is_active']),
         ]);
     }
 
@@ -70,12 +70,6 @@ class UserManagementController extends Controller
         ]);
 
         $user->syncRoles($validated['roles']);
-
-        // Set the role_slug to the first role's slug for backwards compatibility
-        $firstRole = Role::find($validated['roles'][0]);
-        if ($firstRole) {
-            $user->update(['role_slug' => $firstRole->slug]);
-        }
 
         return redirect()->route('users.index')
             ->with('success', 'User created successfully.');
@@ -105,7 +99,7 @@ class UserManagementController extends Controller
         return Inertia::render('Users/Edit', [
             'user' => $user,
             'userRoles' => $user->roles->pluck('id')->toArray(),
-            'roles' => Role::active()->get(['id', 'name', 'slug', 'color', 'description']),
+            'roles' => Role::active()->get(['id', 'name', 'slug', 'color', 'description', 'is_system', 'is_active']),
         ]);
     }
 
@@ -142,12 +136,6 @@ class UserManagementController extends Controller
 
         $user->update($updateData);
         $user->syncRoles($validated['roles']);
-
-        // Update role_slug for backwards compatibility
-        $firstRole = Role::find($validated['roles'][0]);
-        if ($firstRole) {
-            $user->update(['role_slug' => $firstRole->slug]);
-        }
 
         return redirect()->route('users.show', $user)
             ->with('success', 'User updated successfully.');

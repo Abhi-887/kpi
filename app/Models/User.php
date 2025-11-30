@@ -73,7 +73,7 @@ class User extends Authenticatable
     /**
      * Get the role as a UserRole enum
      */
-    public function role(): UserRole
+    public function role(): ?UserRole
     {
         return $this->role_slug;
     }
@@ -83,7 +83,7 @@ class User extends Authenticatable
      */
     public function roleColor(): string
     {
-        return $this->role()->hexColor();
+        return $this->role()?->hexColor() ?? '#6b7280';
     }
 
     /**
@@ -91,7 +91,7 @@ class User extends Authenticatable
      */
     public function roleLabel(): string
     {
-        return $this->role()->label();
+        return $this->role()?->label() ?? 'No Role';
     }
 
     /**
