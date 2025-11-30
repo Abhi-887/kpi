@@ -6,9 +6,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Link, router, usePage } from '@inertiajs/react'
 import { Head } from '@inertiajs/react'
 import AppLayout from '@/layouts/app-layout'
-import { useState } from 'react'
-import { Plus, Search, Trash2, Pencil } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { Plus, Search, Trash2, Pencil, Eye } from 'lucide-react'
 import { type BreadcrumbItem } from '@/types'
+import { useAlert } from '@/hooks/use-alert'
+import { AlertContainer } from '@/components/alert-container'
+import { ConfirmDialog } from '@/components/dialogs/confirm-dialog'
 
 interface Item {
   id: number
@@ -38,8 +41,12 @@ interface PageProps {
 }
 
 export default function ItemsIndex() {
-  const { items, filters = {}, categories = [] } = usePage().props as any
+  const { items, filters = {}, categories = [], flash } = usePage().props as any
   const { auth } = usePage().props
+  const { alerts, dismissAlert, success, error: showError } = useAlert()
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false)
+  const [selectedItem, setSelectedItem] = useState<Item | null>(null)
+  const [isDeleting, setIsDeleting] = useState(false)
 
   const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Items', href: '/items' },
@@ -49,6 +56,16 @@ export default function ItemsIndex() {
   const [category, setCategory] = useState(filters.category || '')
   const [active, setActive] = useState(filters.active || '')
   const [perPage, setPerPage] = useState(filters.per_page || 15)
+
+  // Show flash messages
+  useEffect(() => {
+    if (flash?.success) {
+      success(flash.success)
+    }
+    if (flash?.error) {
+      showError('Error', flash.error)
+    }
+  }, [flash])
 
   const handleSearch = () => {
     router.get('/items', { search, category, active, per_page: perPage }, { preserveScroll: true })
@@ -62,10 +79,27 @@ export default function ItemsIndex() {
     router.get('/items', {}, { preserveScroll: true })
   }
 
-  const handleDelete = (id: number) => {
-    if (confirm('Are you sure you want to delete this item?')) {
-      router.delete(`/items/${id}`)
-    }
+  const handleDelete = (item: Item) => {
+    setSelectedItem(item)
+    setIsDeleteOpen(true)
+  }
+
+  const confirmDelete = () => {
+    if (!selectedItem) return
+    
+    setIsDeleting(true)
+    router.delete(`/items/${selectedItem.id}`, {
+      onSuccess: () => {
+        success(`Item ${selectedItem.item_code} deleted successfully`)
+        setIsDeleteOpen(false)
+      },
+      onError: () => {
+        showError('Failed to delete item', 'An error occurred while deleting')
+      },
+      onFinish: () => {
+        setIsDeleting(false)
+      },
+    })
   }
 
   const handlePaginate = (page: number) => {
@@ -75,6 +109,7 @@ export default function ItemsIndex() {
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
       <Head title="Items" />
+      <AlertContainer alerts={alerts} onDismiss={dismissAlert} />
       <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
         <div className="flex justify-between items-center">
           <h1 className="text-3xl font-bold">Items</h1>
@@ -172,10 +207,10 @@ export default function ItemsIndex() {
                         </Badge>
                       </td>
                       <td className="py-3 px-4 text-center space-x-2">
-                        <Link href={`/items/${item.id}`}>
+                        <Link href={`/items/${item.id}/edit`}>
                           <Button size="sm" variant="ghost"><Pencil className="w-4 h-4" /></Button>
                         </Link>
-                        <Button size="sm" variant="ghost" onClick={() => handleDelete(item.id)}>
+                        <Button size="sm" variant="ghost" onClick={() => handleDelete(item)}>
                           <Trash2 className="w-4 h-4 text-red-500" />
                         </Button>
                       </td>
@@ -205,6 +240,19 @@ export default function ItemsIndex() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Delete Confirmation Modal */}
+      <ConfirmDialog
+        open={isDeleteOpen}
+        onOpenChange={setIsDeleteOpen}
+        title="Delete Item"
+        description={`Are you sure you want to delete item "${selectedItem?.item_code} - ${selectedItem?.name}"? This action cannot be undone.`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        onConfirm={confirmDelete}
+        isLoading={isDeleting}
+        variant="destructive"
+      />
     </AppLayout>
   )
 }

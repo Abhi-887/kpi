@@ -21,16 +21,19 @@ use App\Http\Controllers\MarginRuleController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PackagingPriceController;
+use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\PriceComparisonController;
 use App\Http\Controllers\PriceListController;
 use App\Http\Controllers\QuotationApprovalController;
 use App\Http\Controllers\QuotationController;
 use App\Http\Controllers\RateCardController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\ShipmentController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\TaxCalculationEngineController;
 use App\Http\Controllers\TaxCodeController;
 use App\Http\Controllers\UnitOfMeasureController;
+use App\Http\Controllers\UserManagementController;
 use App\Http\Controllers\VendorRateController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -219,6 +222,28 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('audit-logs', [AuditLogController::class, 'index'])->name('audit-logs.index');
         Route::get('audit-logs/{auditLog}', [AuditLogController::class, 'show'])->name('audit-logs.show');
         Route::get('audit-logs/export/csv', [AuditLogController::class, 'export'])->name('audit-logs.export');
+    });
+
+    // =====================================================
+    // USER MANAGEMENT MODULE (Admin & Super Admin Only)
+    // =====================================================
+    Route::middleware('role:admin')->group(function () {
+        // User Management
+        Route::resource('users', UserManagementController::class);
+        Route::get('users-export', [UserManagementController::class, 'export'])->name('users.export');
+        Route::post('users/bulk-assign-role', [UserManagementController::class, 'bulkAssignRole'])->name('users.bulk-assign-role');
+        Route::post('users/{user}/impersonate', [UserManagementController::class, 'impersonate'])->name('users.impersonate');
+        Route::post('users/stop-impersonating', [UserManagementController::class, 'stopImpersonating'])->name('users.stop-impersonating');
+
+        // Role Management
+        Route::resource('roles', RoleController::class);
+        Route::patch('roles/{role}/toggle-status', [RoleController::class, 'toggleStatus'])->name('roles.toggle-status');
+        Route::post('roles/{role}/duplicate', [RoleController::class, 'duplicate'])->name('roles.duplicate');
+
+        // Permission Management
+        Route::resource('permissions', PermissionController::class);
+        Route::patch('permissions/{permission}/toggle-status', [PermissionController::class, 'toggleStatus'])->name('permissions.toggle-status');
+        Route::post('permissions/bulk-create', [PermissionController::class, 'bulkCreate'])->name('permissions.bulk-create');
     });
 
     // Price Comparison routes
