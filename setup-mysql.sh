@@ -7,9 +7,8 @@ set -e
 
 echo "🔧 Setting up MySQL configuration..."
 
-# Prompt for MySQL password
-read -sp "Enter MySQL password: " MYSQL_PASS
-echo ""
+# MySQL password
+MYSQL_PASS="Rexwal@7008"
 
 # Create .env file
 cat > .env << EOF
