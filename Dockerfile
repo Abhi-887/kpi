@@ -37,8 +37,8 @@ FROM base AS production
 # Install dependencies
 RUN composer install --optimize-autoloader --no-dev --no-interaction
 
-# Install npm dependencies and build assets
-RUN npm ci --only=production \
+# Install ALL npm dependencies (including dev) for build, then remove
+RUN npm ci \
     && npm run build \
     && rm -rf node_modules
 
