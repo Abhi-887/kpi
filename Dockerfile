@@ -12,11 +12,12 @@ RUN apk add --no-cache \
     sqlite \
     sqlite-dev \
     oniguruma-dev \
+    icu-dev \
     nodejs \
     npm
 
-# Install PHP extensions
-RUN docker-php-ext-install pdo pdo_sqlite pdo_mysql mbstring exif pcntl bcmath gd zip
+# Install PHP extensions including intl
+RUN docker-php-ext-install pdo pdo_sqlite pdo_mysql mbstring exif pcntl bcmath gd zip intl
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
