@@ -37,13 +37,24 @@ EOF
 
 echo "✅ .env file created"
 
-# Rebuild and restart
-echo "🏗️  Rebuilding containers..."
+# Stop containers
+echo "🛑 Stopping containers..."
 docker-compose down
-docker-compose up -d --build
+
+# Remove old volumes
+echo "🗑️  Removing old data..."
+rm -f database/database.sqlite
+
+# Rebuild without cache
+echo "🏗️  Rebuilding containers (no cache)..."
+docker-compose build --no-cache
+
+# Start containers
+echo "🚀 Starting containers..."
+docker-compose up -d
 
 echo "⏳ Waiting for containers..."
-sleep 15
+sleep 20
 
 # Test connection
 echo "🔍 Testing MySQL connection..."
