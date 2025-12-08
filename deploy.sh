@@ -50,9 +50,8 @@ if [ ! -f .env ]; then
     echo -e "${YELLOW}📝 Creating .env file...${NC}"
     cp .env.example .env
     
-    # Generate app key
-    echo -e "${YELLOW}🔑 Generating application key...${NC}"
-    docker-compose run --rm app php artisan key:generate
+    # Set a temporary app key (will generate proper one after containers are up)
+    sed -i 's/APP_KEY=/APP_KEY=base64:z3PDtrWkgngQRT8w5y6N8gBBt6BBB40rrxdhXx7draM=/' .env
 fi
 
 # Create database directory if not exists
@@ -70,6 +69,10 @@ echo -e "${GREEN}✅ Containers started${NC}"
 # Wait for containers to be ready
 echo -e "${YELLOW}⏳ Waiting for containers to be ready...${NC}"
 sleep 10
+
+# Generate proper app key
+echo -e "${YELLOW}🔑 Generating application key...${NC}"
+docker-compose exec -T app php artisan key:generate --force
 
 # Run migrations
 echo -e "${YELLOW}📊 Running database migrations...${NC}"
