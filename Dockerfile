@@ -47,11 +47,11 @@ RUN php artisan config:cache \
     && php artisan route:cache \
     && php artisan view:cache
 
-# Expose port
-EXPOSE 8000
+# Expose port (Cloud Run uses PORT env variable, default 8080)
+EXPOSE 8080
 
-# Start application
-CMD php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=8000
+# Start application - Use PORT environment variable from Cloud Run
+CMD php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=${PORT:-8080}
 
 # Development stage
 FROM base AS development
@@ -62,6 +62,6 @@ RUN composer install --no-interaction
 # Install all npm dependencies
 RUN npm install
 
-EXPOSE 8000
+EXPOSE 8080
 
-CMD php artisan serve --host=0.0.0.0 --port=8000
+CMD php artisan serve --host=0.0.0.0 --port=${PORT:-8080}
