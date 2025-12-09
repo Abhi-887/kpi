@@ -59,8 +59,12 @@ class DashboardController extends Controller
             ->pluck('count', 'status');
 
         // Revenue by Month
+        $dateFormat = config('database.default') === 'sqlite'
+            ? "strftime('%Y-%m', created_at)"
+            : "DATE_FORMAT(created_at, '%Y-%m')";
+        
         $revenueByMonth = Invoice::whereBetween('created_at', [$startDate, $endDate])
-            ->selectRaw('DATE_FORMAT(created_at, "%Y-%m") as month, SUM(total_amount) as amount')
+            ->selectRaw("{$dateFormat} as month, SUM(total_amount) as amount")
             ->groupBy('month')
             ->orderBy('month')
             ->pluck('amount', 'month');
